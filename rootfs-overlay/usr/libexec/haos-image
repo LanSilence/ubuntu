@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# 检查 cmdline 中的 rauc.slot 参数
+RAUC_SLOT=$(cat /proc/cmdline | grep -o 'rauc.slot=[AB]' | cut -d= -f2)
+
+# 根据参数选择分区
+case "$RAUC_SLOT" in
+    A)
+        PARTITION="hass-img0"
+        ;;
+    B)
+        PARTITION="hass-img1"
+        ;;
+    *)
+        echo "错误：未检测到有效的 rauc.slot 参数（应为 A 或 B）"
+        PARTITION="hass-img0"
+        ;;
+esac
+
+# 挂载分区到 /homeassistant
+MOUNT_POINT="/homeassistant"
+mkdir -p /mnt/data/.homeassistant
+DEVICE="/dev/disk/by-partlabel/${PARTITION}"
+
+if [ ! -e "$DEVICE" ]; then
+    echo "错误：分区设备不存在: $DEVICE"
+    exit 1
+fi
+
+# 创建挂载点（如果不存在）
+
+
+# 执行挂载
+mount "$DEVICE" "$MOUNT_POINT"
+if [ $? -eq 0 ]; then
+    echo "mount $PARTITION to $MOUNT_POINT success"
+else
+    echo "mount fail!"
+    exit 1
+fi

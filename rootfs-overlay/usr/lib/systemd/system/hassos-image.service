@@ -1,0 +1,15 @@
+[Unit]
+Description=Mount HAOS partition based on rauc.slot
+After=local-fs.target
+Before=homeassistant.service
+Requires=local-fs.target
+ConditionPathExists=/proc/cmdline
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/haos-image
+RemainAfterExit=yes
+StandardOutput=journal
+
+[Install]
+WantedBy=multi-user.target
