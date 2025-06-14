@@ -3,3 +3,4 @@ binary/
 *.tar.gz
 *.7z
 .homeassistantimg
+.ubuntuimg

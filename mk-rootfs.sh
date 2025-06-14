@@ -42,7 +42,7 @@ add-apt-repository -y ppa:deadsnakes/ppa
 python3.13 -m ensurepip
 apt install -y udev    #一定要安装udev！！！不然进不去系统，血的教训
 id systemd-resolve || sudo useradd -r -s /usr/sbin/nologin systemd-resolve
-\${APT_INSTALL} network-manager wpasupplicant wireless-tools systemd-resolved u-boot-tools fdisk 
+\${APT_INSTALL} network-manager wpasupplicant wireless-tools systemd-resolved u-boot-tools fdisk jq
 systemctl enable NetworkManager 
 systemctl enable homeassistant 
 apt install -y iputils-ping

@@ -5,7 +5,7 @@ After=haos-image.mount
 [Service]
 Type=simple
 WorkingDirectory=/homeassistant
-Environment="PATH=/homeassistant/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="PATH=/homeassistant/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ExecStart=python3.13 -m homeassistant --config /mnt/data/.homeassistant
 Restart=on-failure
 RestartSec=30s
