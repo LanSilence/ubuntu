@@ -30,6 +30,7 @@ chmod 1777 tmp
 adduser --system --no-create-home --group systemd-network
 addgroup --system systemd-journal
 useradd -r -s /usr/sbin/nologin messagebus
+useradd -r -s /usr/sbin/nologin systemd-timesync
 groupadd -r polkitd
 useradd -r -g polkitd -d / -s /usr/sbin/nologin -c "Polkit Daemon" polkitd
 echo "LC_ALL=zh_CN.UTF-8" >> /etc/default/locale
