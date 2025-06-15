@@ -4,3 +4,4 @@ binary/
 *.7z
 .homeassistantimg
 .ubuntuimg
+rootfs/
