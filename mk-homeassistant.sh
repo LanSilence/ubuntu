@@ -23,7 +23,7 @@ echo Making home assistant image!
 
 if [ ! -f homeassistant.img ]; then
     fallocate -l 800M homeassistant.img
-    mkfs.ext4 homeassistant.img
+    mkfs.ext4 -L hass-img0 homeassistant.img
 fi
 sudo mount -t erofs  -o loop ${ROOTFSIMAGE} ${TARGET_ROOTFS_DIR}/
 sudo mount homeassistant.img ${TARGET_ROOTFS_DIR}/homeassistant
