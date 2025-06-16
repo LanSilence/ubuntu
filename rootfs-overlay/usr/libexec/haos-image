@@ -17,11 +17,6 @@ case "$RAUC_SLOT" in
         ;;
 esac
 
-if [ ! -d /mnt/data/home/haos ]; then
-    mkdir -p /mnt/data/home/haos
-    chown -R haos:haos /mnt/data/home/haos
-    cp -r /home/haos/.* /mnt/data/home/haos/
-fi
 
 # 挂载分区到 /homeassistant
 MOUNT_POINT="/homeassistant"
@@ -41,8 +36,15 @@ fi
 mount "$DEVICE" "$MOUNT_POINT"
 if [ $? -eq 0 ]; then
     echo "mount $PARTITION to $MOUNT_POINT success"
-    systemctl start home-haos.mount
 else
     echo "mount fail!"
     exit 1
 fi
+
+if [ ! -d /mnt/data/home/haos ]; then
+    mkdir -p /mnt/data/home/haos
+    chown -R haos:haos /mnt/data/home/haos
+    cp -r /home/haos/.* /mnt/data/home/haos/
+fi
+
+systemctl start home-haos.mount

@@ -44,7 +44,7 @@ python3.13 -m ensurepip
 apt install -y udev    #一定要安装udev！！！不然进不去系统，血的教训
 
 \${APT_INSTALL} network-manager systemd-timesyncd wpasupplicant wireless-tools systemd-resolved \
-        libturbojpeg0-dev u-boot-tools fdisk jq aarch64-linux-gnu-gcc build-essential
+        libturbojpeg0-dev u-boot-tools fdisk jq aarch64-linux-gnu-gcc build-essential zlib-ng isal
 sudo useradd -r -s /usr/sbin/nologin systemd-resolve
 systemctl enable NetworkManager 
 systemctl enable homeassistant 
