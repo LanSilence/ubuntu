@@ -1,11 +1,11 @@
 [Unit]
 Description=Dropbear persistent user
 Requires=mnt-overlay.mount
-After=mnt-overlay.mount
+After=hassos-image.service
 Before=homeassistant.service
 
 [Mount]
-What=/mnt/overlay/home/haos
+What=/mnt/data/home/haos
 Where=/home/haos
 Type=None
 Options=bind
