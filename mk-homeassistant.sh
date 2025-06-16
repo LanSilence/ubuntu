@@ -2,7 +2,7 @@
 set -e
 TARGET_ROOTFS_DIR=./rootfs
 
-ROOTFSIMAGE=ubuntu-$IMAGE_VERSION-rootfs.img
+ROOTFSIMAGE=ubuntu-24.02-rootfs.img
 HASS_SOURCE=${1:-"../homeassistant-core/core-2025.5.3"}
 finish() {
     if mountpoint -q "${TARGET_ROOTFS_DIR}/proc"; then
@@ -25,6 +25,7 @@ if [ ! -f homeassistant.img ]; then
     fallocate -l 800M homeassistant.img
     mkfs.ext4 -L hass-img0 homeassistant.img
 fi
+mkdir -p ${TARGET_ROOTFS_DIR}
 sudo mount -t erofs  -o loop ${ROOTFSIMAGE} ${TARGET_ROOTFS_DIR}/
 sudo mount homeassistant.img ${TARGET_ROOTFS_DIR}/homeassistant
 sudo cp -rpf ${HASS_SOURCE}/* ${TARGET_ROOTFS_DIR}/homeassistant
