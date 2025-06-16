@@ -32,12 +32,14 @@ sudo cp -rpf ${HASS_SOURCE}/* ${TARGET_ROOTFS_DIR}/homeassistant
 ./ch-mount.sh -m ${TARGET_ROOTFS_DIR}
 
 cat <<EOF | sudo chroot $TARGET_ROOTFS_DIR/
+chown -R haos:haos /homeassistant
+sudo -i -u haos
 cd /homeassistant
 python3.13 -m venv venv
 source venv/bin/activate
 
 pip install --upgrade pip
-pip install --cache-dir /homeassistant/pip-cache  -r requirements.txt -c homeassistant/package_constraints.txt
+pip install -r requirements.txt -c homeassistant/package_constraints.txt
 rm -rf /homeassistant/pip-cache
 rm -rf tests/                   # 测试代码[2](@ref)
 rm -f requirements_test*.txt    # 测试依赖文件[2](@ref)
