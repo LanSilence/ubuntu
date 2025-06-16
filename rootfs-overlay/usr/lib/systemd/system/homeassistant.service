@@ -3,6 +3,7 @@ Description=Home Assistant
 After=haos-image.mount
 
 [Service]
+User=haos
 Type=simple
 WorkingDirectory=/homeassistant
 Environment="PATH=/homeassistant/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"

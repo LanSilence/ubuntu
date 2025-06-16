@@ -20,6 +20,7 @@ esac
 # 挂载分区到 /homeassistant
 MOUNT_POINT="/homeassistant"
 mkdir -p /mnt/data/.homeassistant
+chown -R haos:haos /mnt/data/.homeassistant
 DEVICE="/dev/disk/by-label/${PARTITION}"
 
 if [ ! -e "$DEVICE" ]; then

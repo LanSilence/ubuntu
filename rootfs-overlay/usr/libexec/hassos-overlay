@@ -4,10 +4,15 @@ mkdir -p /mnt/overlay/etc/
 
 # Network
 mkdir -p /mnt/overlay/etc/NetworkManager/system-connections
-mkdir -p /mnt/overlay/root/.cache/uv
 
 if [ ! -f /mnt/overlay/etc/hostname ]; then
     cp -fp /etc/hostname /mnt/overlay/etc/hostname
+fi
+
+if [ ! -d /mnt/overlay/home/haos ]; then
+    mkdir -p /mnt/overlay/home/haos
+    chown -R haos:haos /mnt/overlay/home/haos
+    cp -r /home/haos/.* /mnt/overlay/home/haos/
 fi
 
 if [ ! -f /mnt/overlay/etc/hosts ]; then

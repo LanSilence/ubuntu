@@ -42,9 +42,10 @@ add-apt-repository -y ppa:deadsnakes/ppa
 \${APT_INSTALL} python3.13 python3.13-dev  python3.13-venv
 python3.13 -m ensurepip
 apt install -y udev    #一定要安装udev！！！不然进不去系统，血的教训
-id systemd-resolve || sudo useradd -r -s /usr/sbin/nologin systemd-resolve
+
 \${APT_INSTALL} network-manager systemd-timesyncd wpasupplicant wireless-tools systemd-resolved \
         libturbojpeg0-dev u-boot-tools fdisk jq aarch64-linux-gnu-gcc build-essential
+sudo useradd -r -s /usr/sbin/nologin systemd-resolve
 systemctl enable NetworkManager 
 systemctl enable homeassistant 
 systemctl enable systemd-timesyncd

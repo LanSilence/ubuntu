@@ -5,8 +5,8 @@ After=mnt-overlay.mount
 Before=homeassistant.service
 
 [Mount]
-What=/mnt/overlay/root/.cache
-Where=/root/.cache
+What=/mnt/overlay/home/haos
+Where=/home/haos
 Type=None
 Options=bind
 
