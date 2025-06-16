@@ -30,6 +30,7 @@ chmod 1777 tmp
 adduser --system --no-create-home --group systemd-network
 addgroup --system systemd-journal
 useradd -r -s /usr/sbin/nologin messagebus
+useradd -r -s /usr/sbin/nologin systemd-timesync
 groupadd -r polkitd
 useradd -r -g polkitd -d / -s /usr/sbin/nologin -c "Polkit Daemon" polkitd
 echo "LC_ALL=zh_CN.UTF-8" >> /etc/default/locale
@@ -42,9 +43,11 @@ add-apt-repository -y ppa:deadsnakes/ppa
 python3.13 -m ensurepip
 apt install -y udev    #一定要安装udev！！！不然进不去系统，血的教训
 id systemd-resolve || sudo useradd -r -s /usr/sbin/nologin systemd-resolve
-\${APT_INSTALL} network-manager wpasupplicant wireless-tools systemd-resolved u-boot-tools fdisk jq
+\${APT_INSTALL} network-manager systemd-timesyncd wpasupplicant wireless-tools systemd-resolved \
+        libturbojpeg0-dev u-boot-tools fdisk jq
 systemctl enable NetworkManager 
 systemctl enable homeassistant 
+systemctl enable systemd-timesyncd
 apt install -y iputils-ping
 
 apt install -y sudo
@@ -80,23 +83,38 @@ rm -rf /var/lib/apt/lists/*
 rm -rf /var/lib/apt/lists/*
 rm -rf /var/cache/
 rm -rf /packages/
+rm -rf /etc/update-motd.d/{10-help-text,60-unminimize}
 
 sync
 
 EOF
-sudo mkdir -p binary/lib/firmware/brcm/
+sudo mkdir -p binary/lib/firmware/{brcm,aic8800_sdio}
 sudo cp -r linux-firmware/brcm/* $TARGET_ROOTFS_DIR/lib/firmware/brcm/
+sudo cp -r linux-firmware/aic8800_sdio/* $TARGET_ROOTFS_DIR/lib/firmware/aic8800_sdio/
 sudo cp -rpf rootfs-overlay/* $TARGET_ROOTFS_DIR/
 cat <<EOF | sudo chroot $TARGET_ROOTFS_DIR/
 mkdir /homeassistant
 systemctl enable homeassistant 
 systemctl enable hassos-overlay
-systemctl enable hassos-data
 systemctl enable hassos-image
+systemctl enable root-.cache.mount
 rm -rf /lib/modules/6.12.0-haos+/build
 rm -rf sbin.usr-is-merged bin.usr-is-merged lib.usr-is-merged
+rm /root/.bash_history
 EOF
 ./ch-mount.sh -u $TARGET_ROOTFS_DIR
 
+ID=$(stat --format %u $TARGET_ROOTFS_DIR)
+
+cat << EOF | sudo chroot $TARGET_ROOTFS_DIR
+
+# Fixup owners
+if [ "$ID" -ne 0 ]; then
+    find / -user $ID -exec chown -h 0:0 {} \;
+fi
+for u in \$(ls /home/); do
+    chown -h -R \$u:\$u /home/\$u
+done
+EOF
 
 echo -e "\033[47;36m normal exit \033[0m"

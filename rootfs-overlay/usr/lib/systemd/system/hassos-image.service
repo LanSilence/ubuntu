@@ -1,13 +1,13 @@
 [Unit]
 Description=Mount HAOS partition based on rauc.slot
-After=local-fs.target
+After=local-fs.target dev-disk-by\x2dlabel-hass\x2dimg0.device
 Before=homeassistant.service
 Requires=local-fs.target
 ConditionPathExists=/proc/cmdline
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/bin/haos-image
+ExecStart=/usr/libexec/haos-image
 RemainAfterExit=yes
 StandardOutput=journal
 

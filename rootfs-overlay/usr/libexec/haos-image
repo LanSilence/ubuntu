@@ -20,7 +20,7 @@ esac
 # 挂载分区到 /homeassistant
 MOUNT_POINT="/homeassistant"
 mkdir -p /mnt/data/.homeassistant
-DEVICE="/dev/disk/by-partlabel/${PARTITION}"
+DEVICE="/dev/disk/by-label/${PARTITION}"
 
 if [ ! -e "$DEVICE" ]; then
     echo "错误：分区设备不存在: $DEVICE"
