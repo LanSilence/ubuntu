@@ -22,7 +22,7 @@ trap finish ERR
 echo Making home assistant image!
 
 if [ ! -f homeassistant.img ]; then
-    fallocate -l 900M homeassistant.img
+    fallocate -l 1200M homeassistant.img
     mkfs.ext4 -L hass-img0 homeassistant.img
 fi
 mkdir -p ${TARGET_ROOTFS_DIR}
