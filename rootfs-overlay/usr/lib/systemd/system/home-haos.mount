@@ -1,6 +1,5 @@
 [Unit]
 Description=Dropbear persistent user
-Requires=mnt-overlay.mount
 After=hassos-image.service
 Before=homeassistant.service
 
@@ -11,4 +10,4 @@ Type=None
 Options=bind
 
 [Install]
-WantedBy=hassos-bind.target
+WantedBy=multi-user.target

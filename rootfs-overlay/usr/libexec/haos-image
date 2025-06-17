@@ -44,7 +44,5 @@ fi
 if [ ! -d /mnt/data/home/haos ]; then
     mkdir -p /mnt/data/home/haos
     chown -R haos:haos /mnt/data/home/haos
-    cp -r /home/haos/.* /mnt/data/home/haos/
+    sudo -u haos cp -r /home/haos/.* /mnt/data/home/haos/
 fi
-
-systemctl start home-haos.mount

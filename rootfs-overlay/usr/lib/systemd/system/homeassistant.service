@@ -1,6 +1,6 @@
 [Unit]
 Description=Home Assistant
-After=haos-image.mount home-haos.mount
+After=hassos-image.mount home-haos.mount
 
 [Service]
 User=haos
