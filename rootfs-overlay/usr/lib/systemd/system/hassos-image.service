@@ -1,8 +1,8 @@
 [Unit]
 Description=Mount HAOS partition based on rauc.slot
-After=local-fs.target dev-disk-by\x2dlabel-hass\x2dimg0.device
+DefaultDependencies=no
+After=dev-disk-by\x2dlabel-hass\x2dimg0.device hassos-overlay.service
 Before=homeassistant.service
-Requires=local-fs.target
 ConditionPathExists=/proc/cmdline
 
 [Service]
