@@ -33,7 +33,7 @@ useradd -r -s /usr/sbin/nologin messagebus
 useradd -r -s /usr/sbin/nologin systemd-timesync
 groupadd -r polkitd
 useradd -r -g polkitd -d / -s /usr/sbin/nologin -c "Polkit Daemon" polkitd
-echo "LC_ALL=zh_CN.UTF-8" >> /etc/default/locale
+echo "LC_ALL=C.UTF-8" >> /etc/default/locale
 apt install -y vim net-tools iproute2 curl wget openssh-server
 cd /bin && mv -f systemd-sysusers{,.org} && ln -s echo systemd-sysusers && cd -
 apt install -y vim net-tools iproute2 curl wget openssh-server

@@ -1,70 +1,84 @@
-#!/bin/bash -e
+#!/bin/bash
 set -e
-TARGET_ROOTFS_DIR=./rootfs
 
+# 1. 环境变量
+PYTHON_VERSION=3.13
+HASS_VERSION=2025.5.3
+FRONTEND_VERSION=20250516.0
+MATTER_SERVER_VERSION=7.0.0
+AIODISCOVER_VERSION=2.7.0
 ROOTFSIMAGE=ubuntu-24.02-rootfs.img
-HASS_SOURCE=${1:-"../homeassistant-core/core-2025.5.3"}
-finish() {
-    if mountpoint -q "${TARGET_ROOTFS_DIR}/proc"; then
-        ./ch-mount.sh -u $TARGET_ROOTFS_DIR
-    fi
-    if mountpoint -q "${TARGET_ROOTFS_DIR}/homeassistant"; then
-        sudo umount "${TARGET_ROOTFS_DIR}/homeassistant"
-    fi
-    if mountpoint -q "${TARGET_ROOTFS_DIR}"; then
-        sudo umount "${TARGET_ROOTFS_DIR}/"
-    fi
-    echo -e "error exit"
-    exit -1
-}
-trap finish ERR
+TARGET_ROOTFS_DIR=./rootfs
+HASS_SOURCE=../homeassistant-core/core-${HASS_VERSION}
+IMG=homeassistant.img
+IMG_SIZE=1200M
 
-echo Making home assistant image!
-
-if [ ! -f homeassistant.img ]; then
-    fallocate -l 1200M homeassistant.img
-    mkfs.ext4 -L hass-img0 homeassistant.img
+# 2. 创建 ext4 镜像
+if [ ! -f $IMG ]; then
+    fallocate -l $IMG_SIZE $IMG
+    mkfs.ext4 -L hass-img0 $IMG
 fi
-mkdir -p ${TARGET_ROOTFS_DIR}
-sudo mount -t erofs  -o loop ${ROOTFSIMAGE} ${TARGET_ROOTFS_DIR}/
-sudo mount homeassistant.img ${TARGET_ROOTFS_DIR}/homeassistant
-sudo cp -rpf ${HASS_SOURCE}/* ${TARGET_ROOTFS_DIR}/homeassistant
-./ch-mount.sh -m ${TARGET_ROOTFS_DIR}
 
+# 3. 挂载 rootfs 和 homeassistant 分区
+mkdir -p $TARGET_ROOTFS_DIR
+sudo mount -t erofs -o loop $ROOTFSIMAGE $TARGET_ROOTFS_DIR/
+sudo mount $IMG $TARGET_ROOTFS_DIR/homeassistant
+
+# 4. 拷贝 Home Assistant Core 源码
+sudo cp -a $HASS_SOURCE/. $TARGET_ROOTFS_DIR/homeassistant
+
+# 5. 挂载 proc/sys/dev（如有 chroot 脚本可用 ch-mount.sh）
+if [ -f ./ch-mount.sh ]; then
+    ./ch-mount.sh -m $TARGET_ROOTFS_DIR
+fi
+
+# 6. 进入 chroot 构建环境
 cat <<EOF | sudo chroot $TARGET_ROOTFS_DIR/
 chown -R haos:haos /homeassistant
-sudo -i -u haos
+sudo -u haos -i bash <<'INHAOS'
 cd /homeassistant
-python3.13 -m venv venv
-source venv/bin/activate
 
+python${PYTHON_VERSION} -m venv venv
+source venv/bin/activate
+export UV_LINK_MODE=copy
+export UV_CACHE_DIR=/homeassistant/uv-cache
+pip3 install uv==0.7.1
 pip install --upgrade pip
 pip install -r requirements.txt -c homeassistant/package_constraints.txt
-rm -rf /homeassistant/pip-cache
-rm -rf tests/                   # 测试代码[2](@ref)
-rm -f requirements_test*.txt    # 测试依赖文件[2](@ref)
-rm -f .pylintrc                 # lint配置
-rm -f mypy.ini                  # 类型检查配置
 
-# 构建/缓存文件
-rm -rf pip-build-env-*          # pip临时构建环境[1](@ref)
-rm -rf homeassistant.egg-info   # 安装元数据[1](@ref)
-rm -rf uv-cache                 # UV工具缓存[5](@ref)
-rm -rf build/ dist/             # 构建产物目录
+# 安装前端、matter-server、aiodiscover
+/homeassistant/venv/bin/uv pip install home-assistant-frontend==${FRONTEND_VERSION} --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+/homeassistant/venv/bin/uv pip install python-matter-server==${MATTER_SERVER_VERSION} --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+/homeassistant/venv/bin/uv pip install aiodiscover==${AIODISCOVER_VERSION} --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+/homeassistant/venv/bin/uv pip install --quiet aiodhcpwatcher==1.1.1 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+/homeassistant/venv/bin/uv pip install --quiet av==13.1.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+/homeassistant/venv/bin/uv pip install --quiet PyNaCl==1.5.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+# 下载并解压 translations（本地构建无需下载，官方包已自带translations）
+# if [ -f script/translations.py ]; then
+#     python3 -m script.translations download
+# fi
 
-# 文档/协作文件
-rm -f CLA.md CODE_OF_CONDUCT.md CONTRIBUTING.md
-rm -f codecov.yml .coveragerc   # 覆盖率配置
-rm -f Dockerfile*               # 容器配置（除非需要容器化）
+# 可选：预编译前端资源
+if [ -f script/frontend.py ]; then
+    python3 -m script.frontend
+fi
+
+# 清理
+rm -rf pip-cache tests/ requirements_test*.txt .pylintrc mypy.ini
+rm -rf pip-build-env-* homeassistant.egg-info uv-cache build/ dist/
+rm -f CLA.md CODE_OF_CONDUCT.md CONTRIBUTING.md codecov.yml .coveragerc Dockerfile*
 find . -name "__pycache__" -exec rm -rf {} +
+INHAOS
 EOF
 
-./ch-mount.sh -u $TARGET_ROOTFS_DIR
-sudo umount ${TARGET_ROOTFS_DIR}/homeassistant
-sudo umount  ${TARGET_ROOTFS_DIR}/
-# sudo ./post-build.sh $TARGET_ROOTFS_DIR
+# 7. 卸载
+if [ -f ./ch-mount.sh ]; then
+    ./ch-mount.sh -u $TARGET_ROOTFS_DIR
+fi
+sudo umount $TARGET_ROOTFS_DIR/homeassistant
+sudo umount $TARGET_ROOTFS_DIR/
 
-# Create directories
+echo "Home Assistant OS Core ext4 镜像已构建完成：$IMG"
 
 
 
