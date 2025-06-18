@@ -41,6 +41,8 @@ cd /homeassistant
 python${PYTHON_VERSION} -m venv venv
 source venv/bin/activate
 export UV_LINK_MODE=copy
+export TMPDIR=/homeassistant/tmp
+mkdir -p /homeassistant/tmp
 export UV_CACHE_DIR=/homeassistant/uv-cache
 pip3 install uv==0.7.1
 pip install --upgrade pip
@@ -68,6 +70,7 @@ rm -rf pip-cache tests/ requirements_test*.txt .pylintrc mypy.ini
 rm -rf pip-build-env-* homeassistant.egg-info uv-cache build/ dist/
 rm -f CLA.md CODE_OF_CONDUCT.md CONTRIBUTING.md codecov.yml .coveragerc Dockerfile*
 find . -name "__pycache__" -exec rm -rf {} +
+rm -rf /homeassistant/tmp
 INHAOS
 EOF
 
