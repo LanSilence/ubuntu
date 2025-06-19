@@ -9,6 +9,15 @@ finish() {
     echo -e "error exit"
     exit -1
 }
+
+# . scripts/generate-signing-key.sh
+# . scripts/rauc.sh
+
+# openssl req -x509 -newkey rsa:4096 -keyout  \
+#                 -out "${cert}" -days 3650 -nodes \
+#                 -subj "/O=HassOS/CN=HassOS Self-signed Development Certificate"
+
+
 trap finish ERR
 echo -e "\033[47;36m Change root.................... \033[0m"
 
@@ -44,11 +53,14 @@ python3.13 -m ensurepip
 apt install -y udev    #一定要安装udev！！！不然进不去系统，血的教训
 
 \${APT_INSTALL} network-manager systemd-timesyncd wpasupplicant wireless-tools systemd-resolved \
-        libturbojpeg0-dev u-boot-tools fdisk jq aarch64-linux-gnu-gcc build-essential zlib-ng isal
+        libturbojpeg0-dev u-boot-tools fdisk jq aarch64-linux-gnu-gcc build-essential zlib-ng isal 、
+        libusb-1.0-0 usbutils
 sudo useradd -r -s /usr/sbin/nologin systemd-resolve
 systemctl enable NetworkManager 
 systemctl enable homeassistant 
 systemctl enable systemd-timesyncd
+systemctl enable mnt-boot.mount
+systemctl enable raucdb-update
 apt install -y iputils-ping
 
 apt install -y sudo
@@ -85,6 +97,7 @@ rm -rf /var/lib/apt/lists/*
 rm -rf /var/cache/
 rm -rf /packages/
 rm -rf /etc/update-motd.d/{10-help-text,60-unminimize}
+rm -rf /home/haos/.cache/uv/*
 
 sync
 
@@ -99,9 +112,11 @@ systemctl enable homeassistant
 systemctl enable hassos-overlay
 systemctl enable hassos-image
 systemctl enable home-haos.mount
+systemctl enable hassos-persists.service
 rm -rf /lib/modules/6.12.0-haos+/build
 rm -rf sbin.usr-is-merged bin.usr-is-merged lib.usr-is-merged
 rm /root/.bash_history
+history -c
 EOF
 ./ch-mount.sh -u $TARGET_ROOTFS_DIR
 
