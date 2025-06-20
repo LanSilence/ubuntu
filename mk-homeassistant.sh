@@ -35,7 +35,7 @@ fi
 # 6. 进入 chroot 构建环境
 cat <<EOF | sudo chroot $TARGET_ROOTFS_DIR/
 chown -R haos:haos /homeassistant
-sudo -u haos -i bash <<'INHAOS'
+sudo -u haos -i bash 
 cd /homeassistant
 
 python${PYTHON_VERSION} -m venv venv
@@ -71,7 +71,7 @@ rm -rf pip-build-env-* homeassistant.egg-info uv-cache build/ dist/
 rm -f CLA.md CODE_OF_CONDUCT.md CONTRIBUTING.md codecov.yml .coveragerc Dockerfile*
 find . -name "__pycache__" -exec rm -rf {} +
 rm -rf /homeassistant/tmp
-INHAOS
+exit
 EOF
 
 # 7. 卸载
