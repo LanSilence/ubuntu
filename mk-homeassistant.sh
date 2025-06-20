@@ -42,6 +42,8 @@ python${PYTHON_VERSION} -m venv venv
 source venv/bin/activate
 export UV_LINK_MODE=copy
 export TMPDIR=/homeassistant/tmp
+export PIP_NO_CACHE_DIR=1
+export UV_CONCURRENT_DOWNLOADS=1
 mkdir -p /homeassistant/tmp
 export UV_CACHE_DIR=/homeassistant/uv-cache
 pip3 install uv==0.7.1
