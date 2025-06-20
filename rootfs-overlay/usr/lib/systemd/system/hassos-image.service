@@ -1,7 +1,7 @@
 [Unit]
 Description=Mount HAOS partition based on rauc.slot
 DefaultDependencies=no
-After=dev-disk-by\x2dlabel-hass\x2dimg0.device hassos-overlay.service
+After=dev-disk-by\x2dlabel-hass\x2dimg0.device hassos-overlay.service mnt-data.mount
 Before=homeassistant.service
 ConditionPathExists=/proc/cmdline
 
