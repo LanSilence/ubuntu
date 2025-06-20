@@ -35,7 +35,7 @@ fi
 # 6. 进入 chroot 构建环境
 cat <<EOF | sudo chroot $TARGET_ROOTFS_DIR/
 chown -R haos:haos /homeassistant
-sudo -u haos -i bash 
+su haos
 cd /homeassistant
 
 python${PYTHON_VERSION} -m venv venv
