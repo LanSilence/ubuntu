@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 # 1. 环境变量
 PYTHON_VERSION=3.13
@@ -18,7 +18,7 @@ if [ ! -f $IMG ]; then
     fallocate -l $IMG_SIZE $IMG
     mkfs.ext4 -L hass-img0 $IMG
 fi
-
+trap 'echo "Error occurred, checking dmesg..."; dmesg | grep -i "killed"; exit 1' ERR
 # 3. 挂载 rootfs 和 homeassistant 分区
 mkdir -p $TARGET_ROOTFS_DIR
 sudo mount -t erofs -o loop $ROOTFSIMAGE $TARGET_ROOTFS_DIR/
@@ -35,7 +35,7 @@ fi
 # 6. 进入 chroot 构建环境
 cat << EOF | sudo chroot $TARGET_ROOTFS_DIR
 chown -R haos:haos /homeassistant
-su haos
+
 cd /homeassistant
 
 python${PYTHON_VERSION} -m venv venv
@@ -66,7 +66,8 @@ rm -rf pip-build-env-* homeassistant.egg-info uv-cache build/ dist/
 rm -f CLA.md CODE_OF_CONDUCT.md CONTRIBUTING.md codecov.yml .coveragerc Dockerfile*
 find . -name "__pycache__" -exec rm -rf {} +
 rm -rf /homeassistant/tmp
-
+chown -R haos:haos /homeassistant/*
+chown -R haos:haos /homeassistant/.*
 EOF
 
 # 7. 卸载
