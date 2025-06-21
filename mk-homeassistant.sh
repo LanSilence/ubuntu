@@ -46,15 +46,10 @@ export PIP_NO_CACHE_DIR=1
 export UV_CONCURRENT_DOWNLOADS=1
 mkdir -p /homeassistant/tmp
 export UV_CACHE_DIR=/homeassistant/uv-cache
-pip3 install uv==0.7.1
 
 # 安装前端、matter-server、aiodiscover
 /homeassistant/venv/bin/uv pip install home-assistant-frontend==${FRONTEND_VERSION} --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/uv pip install python-matter-server==${MATTER_SERVER_VERSION} --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/uv pip install aiodiscover==${AIODISCOVER_VERSION} --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/uv pip install --quiet aiodhcpwatcher==1.1.1 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/uv pip install --quiet av==13.1.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/uv pip install --quiet PyNaCl==1.5.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+
 # 下载并解压 translations（本地构建无需下载，官方包已自带translations）
 # if [ -f script/translations.py ]; then
 #     python3 -m script.translations download
