@@ -38,28 +38,6 @@ chown -R haos:haos /homeassistant
 
 cd /homeassistant
 
-python${PYTHON_VERSION} -m venv venv
-source venv/bin/activate
-export UV_LINK_MODE=copy
-export TMPDIR=/homeassistant/tmp
-export PIP_NO_CACHE_DIR=1
-export UV_CONCURRENT_DOWNLOADS=1
-mkdir -p /homeassistant/tmp
-export UV_CACHE_DIR=/homeassistant/uv-cache
-
-# 安装前端、matter-server、aiodiscover
-/homeassistant/venv/bin/uv pip install home-assistant-frontend==${FRONTEND_VERSION} --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-
-# 下载并解压 translations（本地构建无需下载，官方包已自带translations）
-# if [ -f script/translations.py ]; then
-#     python3 -m script.translations download
-# fi
-
-# 可选：预编译前端资源
-if [ -f script/frontend.py ]; then
-    python3 -m script.frontend
-fi
-
 # 清理
 rm -rf pip-cache tests/ requirements_test*.txt .pylintrc mypy.ini
 rm -rf pip-build-env-* homeassistant.egg-info uv-cache build/ dist/
