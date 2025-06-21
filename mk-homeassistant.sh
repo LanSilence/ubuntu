@@ -47,8 +47,6 @@ export UV_CONCURRENT_DOWNLOADS=1
 mkdir -p /homeassistant/tmp
 export UV_CACHE_DIR=/homeassistant/uv-cache
 pip3 install uv==0.7.1
-pip install --upgrade pip
-pip install -r requirements.txt -c homeassistant/package_constraints.txt
 
 # 安装前端、matter-server、aiodiscover
 /homeassistant/venv/bin/uv pip install home-assistant-frontend==${FRONTEND_VERSION} --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
