@@ -53,17 +53,12 @@ python3.13 -m ensurepip
 apt install -y udev    #一定要安装udev！！！不然进不去系统，血的教训
 
 \${APT_INSTALL} network-manager systemd-timesyncd wpasupplicant wireless-tools systemd-resolved \
-        libturbojpeg0-dev u-boot-tools fdisk jq build-essential zlib-ng isal \
-        libusb-1.0-0 usbutils mosquitto 
-sudo useradd -r -s /usr/sbin/nologin systemd-resolve
-systemctl enable NetworkManager 
-systemctl enable homeassistant 
-systemctl enable systemd-timesyncd
-systemctl enable mnt-boot.mount
-systemctl enable raucdb-update
+        libturbojpeg0-dev u-boot-tools fdisk jq build-essential zlib-ng isal libusb-1.0-0 usbutils mosquitto 
+useradd -r -s /usr/sbin/nologin systemd-resolve
+
 apt install -y iputils-ping
 
-apt install -y sudo
+apt install -y sudo libusb-1.0-0 usbutils mosquitto 
 apt install -y kmod
 apt install -y apt-utils
 mkdir /mnt/{data,overlay,config,boot}
@@ -115,6 +110,12 @@ systemctl enable hassos-overlay
 systemctl enable hassos-image
 systemctl enable home-haos.mount
 systemctl enable hassos-persists.service
+systemctl enable NetworkManager 
+systemctl enable homeassistant 
+systemctl enable systemd-timesyncd
+systemctl enable mnt-boot.mount
+systemctl enable raucdb-update
+chown mosquitto:mosquitto /etc/mosquitto/pwfile
 rm -rf /lib/modules/6.12.0-haos+/build
 rm -rf sbin.usr-is-merged bin.usr-is-merged lib.usr-is-merged
 rm /root/.bash_history
@@ -133,7 +134,6 @@ fi
 for u in \$(ls /home/); do
     chown -h -R \$u:\$u /home/\$u
 done
-chown mosquitto:mosquitto /etc/mosquitto/pwfile
 EOF
 
 echo -e "\033[47;36m normal exit \033[0m"
