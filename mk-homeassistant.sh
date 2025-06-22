@@ -8,7 +8,7 @@ FRONTEND_VERSION=20250516.0
 MATTER_SERVER_VERSION=7.0.0
 AIODISCOVER_VERSION=2.7.0
 ROOTFSIMAGE=ubuntu-24.02-rootfs.img
-TARGET_ROOTFS_DIR=./rootfs
+TARGET_ROOTFS_DIR=./binary
 HASS_SOURCE=../homeassistant-core/core-${HASS_VERSION}
 IMG=homeassistant.img
 IMG_SIZE=1200M
@@ -20,8 +20,8 @@ if [ ! -f $IMG ]; then
 fi
 trap 'echo "Error occurred, checking dmesg..."; dmesg | grep -i "killed"; exit 1' ERR
 # 3. 挂载 rootfs 和 homeassistant 分区
-mkdir -p $TARGET_ROOTFS_DIR
-sudo mount -t erofs -o loop $ROOTFSIMAGE $TARGET_ROOTFS_DIR/
+# mkdir -p $TARGET_ROOTFS_DIR
+# sudo mount -t erofs -o loop $ROOTFSIMAGE $TARGET_ROOTFS_DIR/
 sudo mount $IMG $TARGET_ROOTFS_DIR/homeassistant
 
 # 4. 拷贝 Home Assistant Core 源码
