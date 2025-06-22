@@ -34,6 +34,9 @@ fi
 
 # 6. 进入 chroot 构建环境
 cat <<EOF | sudo chroot $TARGET_ROOTFS_DIR/
+apt update
+mkdir -p /var/cache/apt/archives/partial
+apt install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 chown -R haos:haos /homeassistant
 su haos
 cd /homeassistant

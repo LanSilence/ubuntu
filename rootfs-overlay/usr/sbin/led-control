@@ -8,7 +8,7 @@ if [ ! -d "$LED_PATH" ]; then
     echo "Error: LED device not found at $LED_PATH"
     exit 1
 fi
-
+modprobe ledtrig-timer 
 # 功能函数：设置 LED 状态
 set_led_state() {
     case $1 in
@@ -34,8 +34,8 @@ set_led_state() {
             ;;
         "fast")
             echo "timer" > "$LED_PATH/trigger"  # 定时器触发
-            echo "200" > "$LED_PATH/delay_on"   # 亮 200ms
-            echo "200" > "$LED_PATH/delay_off"  # 灭 200ms
+            echo "100" > "$LED_PATH/delay_on"   # 亮 100ms
+            echo "100" > "$LED_PATH/delay_off"  # 灭 100ms
             echo "LED set to FAST BLINK"
             ;;
         *)

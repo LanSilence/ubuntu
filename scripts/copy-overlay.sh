@@ -16,6 +16,7 @@ systemctl enable hassos-persists.service
 rm -rf /lib/modules/6.12.0-haos+/build
 rm -rf sbin.usr-is-merged bin.usr-is-merged lib.usr-is-merged
 rm /root/.bash_history
+chown mosquitto:mosquitto /etc/mosquitto/pwfile
 history -c
 EOF
 
