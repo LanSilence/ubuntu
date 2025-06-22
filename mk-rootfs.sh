@@ -53,8 +53,8 @@ python3.13 -m ensurepip
 apt install -y udev    #一定要安装udev！！！不然进不去系统，血的教训
 
 \${APT_INSTALL} network-manager systemd-timesyncd wpasupplicant wireless-tools systemd-resolved \
-        libturbojpeg0-dev u-boot-tools fdisk jq aarch64-linux-gnu-gcc build-essential zlib-ng isal 、
-        libusb-1.0-0 usbutils
+        libturbojpeg0-dev u-boot-tools fdisk jq build-essential zlib-ng isal \
+        libusb-1.0-0 usbutils mosquitto 
 sudo useradd -r -s /usr/sbin/nologin systemd-resolve
 systemctl enable NetworkManager 
 systemctl enable homeassistant 
@@ -90,6 +90,8 @@ ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 systemctl mask wpa_supplicant-wired@
 systemctl mask wpa_supplicant-nl80211@
 systemctl mask wpa_supplicant@
+
+apt remove -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 
 apt-get clean
 rm -rf /var/lib/apt/lists/*
@@ -131,6 +133,7 @@ fi
 for u in \$(ls /home/); do
     chown -h -R \$u:\$u /home/\$u
 done
+chown mosquitto:mosquitto /etc/mosquitto/pwfile
 EOF
 
 echo -e "\033[47;36m normal exit \033[0m"
