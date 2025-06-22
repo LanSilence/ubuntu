@@ -37,18 +37,20 @@ cat <<EOF | sudo chroot $TARGET_ROOTFS_DIR/
 apt update
 mkdir -p /var/cache/apt/archives/partial
 apt install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+
 chown -R haos:haos /homeassistant
 su haos
+mkdir -p /home/haos/uv-cache
 cd /homeassistant
 
 python${PYTHON_VERSION} -m venv venv
 source venv/bin/activate
 export UV_LINK_MODE=copy
-export TMPDIR=/homeassistant/tmp
+export TMPDIR=/home/haos/tmp
 export PIP_NO_CACHE_DIR=1
 export UV_CONCURRENT_DOWNLOADS=1
-mkdir -p /homeassistant/tmp
-export UV_CACHE_DIR=/homeassistant/uv-cache
+mkdir -p ${TMPDIR}
+export UV_CACHE_DIR=/home/haos/uv-cache
 pip3 install uv==0.7.1
 pip install --upgrade pip
 pip install -r requirements.txt -c homeassistant/package_constraints.txt
@@ -75,7 +77,7 @@ rm -rf pip-cache tests/ requirements_test*.txt .pylintrc mypy.ini
 rm -rf pip-build-env-* homeassistant.egg-info uv-cache build/ dist/
 rm -f CLA.md CODE_OF_CONDUCT.md CONTRIBUTING.md codecov.yml .coveragerc Dockerfile*
 find . -name "__pycache__" -exec rm -rf {} +
-rm -rf /homeassistant/tmp
+rm -rf /home/haos/tmp ${UV_CACHE_DIR}
 exit
 EOF
 
