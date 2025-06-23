@@ -36,7 +36,7 @@ fi
 cat <<EOF | sudo chroot $TARGET_ROOTFS_DIR/
 apt update
 mkdir -p /var/cache/apt/archives/partial
-apt install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+apt install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu python3-dev build-essential
 
 chown -R haos:haos /homeassistant
 su haos
