@@ -30,7 +30,7 @@ sudo mount $IMG $TARGET_ROOTFS_DIR/homeassistant
 sudo cp -a $HASS_SOURCE/. $TARGET_ROOTFS_DIR/homeassistant
 
 # 5. 挂载 proc/sys/dev（如有 chroot 脚本可用 ch-mount.sh）
-if [ -f ./ch-mount.sh ]; then
+if [ -f ${SCRIPTS_DIR}/ch-mount.sh ]; then
     ${SCRIPTS_DIR}/ch-mount.sh -m $TARGET_ROOTFS_DIR
 fi
 
