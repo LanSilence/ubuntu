@@ -1,7 +1,7 @@
 #!/bin/bash -e
-
-TARGET_ROOTFS_DIR=./binary
-MOUNTPOINT=./rootfs
+ROOT_DIR=$(pwd)
+TARGET_ROOTFS_DIR=${ROOT_DIR}/binary
+IMAGE_VERSION=${IMAGE_VERSION:-24.04}
 ROOTFSIMAGE=ubuntu-$IMAGE_VERSION-rootfs.img
 
 echo Making system image!

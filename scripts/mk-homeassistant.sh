@@ -7,16 +7,18 @@ HASS_VERSION=2025.5.3
 FRONTEND_VERSION=20250516.0
 MATTER_SERVER_VERSION=7.0.0
 AIODISCOVER_VERSION=2.7.0
-ROOTFSIMAGE=ubuntu-24.02-rootfs.img
-TARGET_ROOTFS_DIR=./binary
-HASS_SOURCE=../homeassistant-core/core-${HASS_VERSION}
+ROOTFSIMAGE=ubuntu-24.04-rootfs.img
+ROOT_DIR=$(pwd)
+TARGET_ROOTFS_DIR=${ROOT_DIR}/binary
+SCRIPTS_DIR=$(dirname "$(readlink -f "$0")")
+HASS_SOURCE=${1:-../homeassistant-core/core-${HASS_VERSION}}
 IMG=homeassistant.img
 IMG_SIZE=1200M
 
 # 2. 创建 ext4 镜像
 if [ ! -f $IMG ]; then
     fallocate -l $IMG_SIZE $IMG
-    mkfs.ext4 -L hass-img0 $IMG
+    mkfs.ext4 -L hass-core $IMG
 fi
 
 # 3. 挂载 rootfs 和 homeassistant 分区
@@ -29,7 +31,7 @@ sudo cp -a $HASS_SOURCE/. $TARGET_ROOTFS_DIR/homeassistant
 
 # 5. 挂载 proc/sys/dev（如有 chroot 脚本可用 ch-mount.sh）
 if [ -f ./ch-mount.sh ]; then
-    ./ch-mount.sh -m $TARGET_ROOTFS_DIR
+    ${SCRIPTS_DIR}/ch-mount.sh -m $TARGET_ROOTFS_DIR
 fi
 
 # 6. 进入 chroot 构建环境
@@ -82,11 +84,10 @@ exit
 EOF
 
 # 7. 卸载
-if [ -f ./ch-mount.sh ]; then
-    ./ch-mount.sh -u $TARGET_ROOTFS_DIR
+if [ -f ${SCRIPTS_DIR}/ch-mount.sh ]; then
+    ${SCRIPTS_DIR}/ch-mount.sh -u $TARGET_ROOTFS_DIR
 fi
 sudo umount $TARGET_ROOTFS_DIR/homeassistant
-sudo umount $TARGET_ROOTFS_DIR/
 
 echo "Home Assistant OS Core ext4 镜像已构建完成：$IMG"
 

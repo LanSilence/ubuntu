@@ -1,11 +1,13 @@
 #!/bin/bash -e
-set -ex
-TARGET_ROOTFS_DIR="binary"
+set -e
+ROOT_DIR=$(pwd)
+SCRIPTS_DIR=$(dirname "$(readlink -f "$0")")
+TARGET_ROOTFS_DIR="${ROOT_DIR}/binary"
 mkdir -p $TARGET_ROOTFS_DIR
 sudo cp /etc/resolv.conf $TARGET_ROOTFS_DIR/etc/resolv.conf
 sudo cp -b /usr/bin/qemu-aarch64-static $TARGET_ROOTFS_DIR/usr/bin/
 finish() {
-    ./ch-mount.sh -u $TARGET_ROOTFS_DIR
+    ${SCRIPTS_DIR}/ch-mount.sh -u $TARGET_ROOTFS_DIR
     echo -e "error exit"
     exit -1
 }
@@ -21,7 +23,7 @@ finish() {
 trap finish ERR
 echo -e "\033[47;36m Change root.................... \033[0m"
 
-./ch-mount.sh -m $TARGET_ROOTFS_DIR
+${SCRIPTS_DIR}/ch-mount.sh -m $TARGET_ROOTFS_DIR
 
 cat <<EOF | sudo chroot $TARGET_ROOTFS_DIR/
 
@@ -99,41 +101,5 @@ rm -rf /home/haos/.cache/uv/*
 sync
 
 EOF
-sudo mkdir -p binary/lib/firmware/{brcm,aic8800_sdio}
-sudo cp -r linux-firmware/brcm/* $TARGET_ROOTFS_DIR/lib/firmware/brcm/
-sudo cp -r linux-firmware/aic8800_sdio/* $TARGET_ROOTFS_DIR/lib/firmware/aic8800_sdio/
-sudo cp -rpf rootfs-overlay/* $TARGET_ROOTFS_DIR/
-cat <<EOF | sudo chroot $TARGET_ROOTFS_DIR/
-mkdir /homeassistant
-systemctl enable homeassistant 
-systemctl enable hassos-overlay
-systemctl enable hassos-image
-systemctl enable home-haos.mount
-systemctl enable hassos-persists.service
-systemctl enable NetworkManager 
-systemctl enable homeassistant 
-systemctl enable systemd-timesyncd
-systemctl enable mnt-boot.mount
-systemctl enable raucdb-update
-chown mosquitto:mosquitto /etc/mosquitto/pwfile
-rm -rf /lib/modules/6.12.0-haos+/build
-rm -rf sbin.usr-is-merged bin.usr-is-merged lib.usr-is-merged
-rm /root/.bash_history
-history -c
-EOF
-./ch-mount.sh -u $TARGET_ROOTFS_DIR
 
-ID=$(stat --format %u $TARGET_ROOTFS_DIR)
-
-cat << EOF | sudo chroot $TARGET_ROOTFS_DIR
-
-# Fixup owners
-if [ "$ID" -ne 0 ]; then
-    find / -user $ID -exec chown -h 0:0 {} \;
-fi
-for u in \$(ls /home/); do
-    chown -h -R \$u:\$u /home/\$u
-done
-EOF
-
-echo -e "\033[47;36m normal exit \033[0m"
+${SCRIPTS_DIR}/ch-mount.sh -u $TARGET_ROOTFS_DIR
