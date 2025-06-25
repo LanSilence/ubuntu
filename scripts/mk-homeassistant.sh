@@ -67,6 +67,10 @@ pip install -r requirements.txt -c homeassistant/package_constraints.txt
 /homeassistant/venv/bin/uv pip install --quiet pyotp==2.8.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
 /homeassistant/venv/bin/uv pip install --quiet PyQRCode==1.2.1 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
 /homeassistant/venv/bin/uv pip install --quiet home-assistant-frontend==20250516.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+/homeassistant/venv/bin/uv pip install --quiet aiousbwatcher==1.1.1 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+/homeassistant/venv/bin/uv pip install --quiet async-upnp-client==0.44.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+/homeassistant/venv/bin/python3.13 -m uv pip install --quiet go2rtc-client==0.1.2 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+/homeassistant/venv/bin/uv pip install --quiet go2rtc-client==0.1.2 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
 # 下载并解压 translations（本地构建无需下载，官方包已自带translations）
 # if [ -f script/translations.py ]; then
 #     python3 -m script.translations download
