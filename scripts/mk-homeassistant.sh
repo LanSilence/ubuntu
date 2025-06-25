@@ -58,12 +58,15 @@ pip install --upgrade pip
 pip install -r requirements.txt -c homeassistant/package_constraints.txt
 
 # 安装前端、matter-server、aiodiscover
-/homeassistant/venv/bin/uv pip install home-assistant-frontend==${FRONTEND_VERSION} --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+
 /homeassistant/venv/bin/uv pip install python-matter-server==${MATTER_SERVER_VERSION} --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
 /homeassistant/venv/bin/uv pip install aiodiscover==${AIODISCOVER_VERSION} --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
 /homeassistant/venv/bin/uv pip install --quiet aiodhcpwatcher==1.1.1 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
 /homeassistant/venv/bin/uv pip install --quiet av==13.1.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
 /homeassistant/venv/bin/uv pip install --quiet PyNaCl==1.5.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+/homeassistant/venv/bin/uv pip install --quiet pyotp==2.8.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+/homeassistant/venv/bin/uv pip install --quiet PyQRCode==1.2.1 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+/homeassistant/venv/bin/uv pip install --quiet home-assistant-frontend==20250516.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
 # 下载并解压 translations（本地构建无需下载，官方包已自带translations）
 # if [ -f script/translations.py ]; then
 #     python3 -m script.translations download
