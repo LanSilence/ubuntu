@@ -24,6 +24,9 @@ mkdir -p /mnt/data/.homeassistant
 chown -R haos:haos /mnt/data/.homeassistant
 DEVICE="/dev/disk/by-partlabel/${PARTITION}"
 
+mkdir -p /mnt/data/tmp
+chmod 777 /mnt/data/tmp
+
 if [ ! -e "$DEVICE" ]; then
     echo "错误：分区设备不存在: $DEVICE"
     exit 1
