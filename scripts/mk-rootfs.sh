@@ -55,7 +55,7 @@ python3.13 -m ensurepip
 apt install -y udev    #一定要安装udev！！！不然进不去系统，血的教训
 
 \${APT_INSTALL} network-manager systemd-timesyncd wpasupplicant unzip wireless-tools systemd-resolved \
-        libturbojpeg0-dev u-boot-tools fdisk jq build-essential zlib-ng isal libusb-1.0-0 usbutils mosquitto 
+        libturbojpeg0-dev u-boot-tools fdisk jq build-essential isal libusb-1.0-0 usbutils mosquitto 
 useradd -r -s /usr/sbin/nologin systemd-resolve
 
 apt install -y iputils-ping
