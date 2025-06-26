@@ -6,7 +6,7 @@ TARGET_ROOTFS_DIR=${ROOT_DIR}/binary/
 OVERLAY_DIR=${ROOT_DIR}/rootfs-overlay/
 
 SCRIPTS_DIR=${ROOT_DIR}/scripts
-HACODE=${1:-"../homeassistant-core/core-2025.5.3"}
+HACODE=${1:-"../source/homeassistant-core/core-2025.5.3"}
 export ROOT_DIR
 export TARGET_ROOTFS_DIR
 export OVERLAY_DIR
