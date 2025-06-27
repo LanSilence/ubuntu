@@ -27,12 +27,12 @@ fi
 sudo mount $IMG $TARGET_ROOTFS_DIR/homeassistant
 
 # 4. 拷贝 Home Assistant Core 源码
-sudo cp -a $HASS_SOURCE/. $TARGET_ROOTFS_DIR/homeassistant
+cp -a $HASS_SOURCE/. $TARGET_ROOTFS_DIR/homeassistant
 
 # 5. 挂载 proc/sys/dev（如有 chroot 脚本可用 ch-mount.sh）
-if [ -f ${SCRIPTS_DIR}/ch-mount.sh ]; then
-    ${SCRIPTS_DIR}/ch-mount.sh -m $TARGET_ROOTFS_DIR
-fi
+# if [ -f ${SCRIPTS_DIR}/ch-mount.sh ]; then
+#     ${SCRIPTS_DIR}/ch-mount.sh -m $TARGET_ROOTFS_DIR
+# fi
 
 # 6. 进入 chroot 构建环境
 cat <<EOF | sudo chroot $TARGET_ROOTFS_DIR/
@@ -91,9 +91,9 @@ exit
 EOF
 
 # 7. 卸载
-if [ -f ${SCRIPTS_DIR}/ch-mount.sh ]; then
-    ${SCRIPTS_DIR}/ch-mount.sh -u $TARGET_ROOTFS_DIR
-fi
+# if [ -f ${SCRIPTS_DIR}/ch-mount.sh ]; then
+#     ${SCRIPTS_DIR}/ch-mount.sh -u $TARGET_ROOTFS_DIR
+# fi
 sudo umount $TARGET_ROOTFS_DIR/homeassistant
 
 echo "Home Assistant OS Core ext4 镜像已构建完成：$IMG"

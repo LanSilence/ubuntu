@@ -4,10 +4,10 @@ ROOT_DIR=$(pwd)
 SCRIPTS_DIR=$(dirname "$(readlink -f "$0")")
 TARGET_ROOTFS_DIR="${ROOT_DIR}/binary"
 mkdir -p $TARGET_ROOTFS_DIR
-sudo cp /etc/resolv.conf $TARGET_ROOTFS_DIR/etc/resolv.conf
-sudo cp -b /usr/bin/qemu-aarch64-static $TARGET_ROOTFS_DIR/usr/bin/
+fakeroot cp /etc/resolv.conf $TARGET_ROOTFS_DIR/etc/resolv.conf
+fakeroot cp /usr/bin/qemu-aarch64-static $TARGET_ROOTFS_DIR/usr/bin/
 finish() {
-    ${SCRIPTS_DIR}/ch-mount.sh -u $TARGET_ROOTFS_DIR
+    # ${SCRIPTS_DIR}/ch-mount.sh -u $TARGET_ROOTFS_DIR
     echo -e "error exit"
     exit -1
 }
@@ -23,12 +23,12 @@ finish() {
 trap finish ERR
 echo -e "\033[47;36m Change root.................... \033[0m"
 
-${SCRIPTS_DIR}/ch-mount.sh -m $TARGET_ROOTFS_DIR
+# ${SCRIPTS_DIR}/ch-mount.sh -m $TARGET_ROOTFS_DIR
 
-cat <<EOF | sudo chroot $TARGET_ROOTFS_DIR/
+cat <<EOF | proot -q qemu-aarch64-static -r $TARGET_ROOTFS_DIR/ -0 -w / -b /dev -b /proc -b /sys /bin/bash
 
 
-export APT_INSTALL="apt-get install -fy --allow-downgrades"
+export APT_INSTALL="DEBIAN_FRONTEND=noninteractive apt-get install -fy --allow-downgrades"
 
 export LC_ALL=C.UTF-8
 
@@ -38,12 +38,7 @@ mkdir -p /var/cache/apt/archives/partial
 apt install adduser
 ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 chmod 1777 tmp  
-adduser --system --no-create-home --group systemd-network
-addgroup --system systemd-journal
-useradd -r -s /usr/sbin/nologin messagebus
-useradd -r -s /usr/sbin/nologin systemd-timesync
-groupadd -r polkitd
-useradd -r -g polkitd -d / -s /usr/sbin/nologin -c "Polkit Daemon" polkitd
+
 echo "LC_ALL=C.UTF-8" >> /etc/default/locale
 apt install -y vim net-tools iproute2 curl wget openssh-server
 cd /bin && mv -f systemd-sysusers{,.org} && ln -s echo systemd-sysusers && cd -
@@ -56,7 +51,6 @@ apt install -y udev    #一定要安装udev！！！不然进不去系统，血�
 
 \${APT_INSTALL} network-manager systemd-timesyncd wpasupplicant unzip wireless-tools systemd-resolved \
         libturbojpeg0-dev u-boot-tools fdisk jq build-essential isal libusb-1.0-0 usbutils mosquitto 
-useradd -r -s /usr/sbin/nologin systemd-resolve
 
 apt install -y iputils-ping
 
@@ -102,4 +96,4 @@ sync
 
 EOF
 
-${SCRIPTS_DIR}/ch-mount.sh -u $TARGET_ROOTFS_DIR
+# ${SCRIPTS_DIR}/ch-mount.sh -u $TARGET_ROOTFS_DIR
