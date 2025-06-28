@@ -17,6 +17,10 @@ else
     echo "Ubuntu image already exists, skipping creation."
 fi
 
+if [! -f .ubuntuimg ];  then
+    echo "############## Ubuntu image build fail exit. #######################"
+    exit 1
+fi
 ${SCRIPTS_DIR}/copy-overlay.sh
 ${SCRIPTS_DIR}/mk-image.sh
 
