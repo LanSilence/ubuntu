@@ -25,7 +25,7 @@ history -c
 apt remove -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
 sudo apt autoremove -y
 apt-get clean
-rm rf /var/lib/apt/lists/*
+rm -rf /var/lib/apt/lists/*
 rm -rf /var/lib/apt/lists/*
 rm -rf /var/cache/
 rm -rf /packages/
