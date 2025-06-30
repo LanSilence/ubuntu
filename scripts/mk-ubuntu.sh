@@ -36,6 +36,12 @@ if [ ! -d hass-core ] || [ -z "$(ls -A hass-core 2>/dev/null)" ]; then
     rm -rf ./hass-core/core-$HASS_VERSION
 fi
 
+# 获取最新版本号
+if [ ! -f cache/assismgr.deb ];then
+ASSISMGER_LATEST_VERSION=$(curl -s https://api.github.com/repos/LanSilence/assismgr/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
+wget -O cache/assismgr.deb https://github.com/LanSilence/assismgr/releases/download/${ASSISMGER_LATEST_VERSION}/assismgr_${ASSISMGER_LATEST_VERSION}_arm64.deb
+fi
+
 if [ ! -f rootfs.tar.gz ];then
 rm -rf homeassistant.img
 
@@ -47,6 +53,8 @@ mmdebstrap --arch=arm64 \
   --components="main universe multiverse restricted"\
   --include="apt,vim,net-tools,iproute2,curl,wget,unzip,sudo,bash,iputils-ping,libusb-1.0-0,usbutils"\
   --setup-hook="mkdir -p \$1/etc" \
+  --customize-hook='cp cache/assismgr.deb "$1"/var/'\
+  --customize-hook='chroot "$1" dpkg -i /var/assismgr.deb'\
   --customize-hook='chroot "$1" add-apt-repository -y ppa:deadsnakes/ppa'\
   --customize-hook='chroot "$1" sed -i "/^deb .*Signed-By=/s/ Signed-By=[^ ]*//" /etc/apt/sources.list.d/deadsnakes-ubuntu-ppa-noble.sources || true' \
   --customize-hook='chroot "$1" apt update' \
