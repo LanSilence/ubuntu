@@ -6,3 +6,4 @@ binary/
 .ubuntuimg
 rootfs/
 binary_bak/
+hass-core/
