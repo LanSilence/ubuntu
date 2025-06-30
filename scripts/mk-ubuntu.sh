@@ -15,9 +15,21 @@ SCRIPTS_DIR=$(dirname "$(readlink -f "$0")")
 HASS_SOURCE=${1:-../source/homeassistant-core/core-${HASS_VERSION}}
 IMG=homeassistant.img
 IMG_SIZE=1200M
-
+HASS_SOURCE_LINK=https://github.com/home-assistant/core/archive/refs/tags/${HASS_VERSION}.tar.gz
+HASS_CACHE=cache/homeassistant-core-v${HASS_VERSION}
 # wget http://ftp.ubuntu.com/ubuntu/pool/universe/o/opensysusers/opensysusers_0.7.3-5_all.deb -O opensysusers.deb
 
+
+if [ ! -f cache/.hasscore ]; then
+    mkdir -p cache/
+    wget -O ${HASS_CACHE} ${HASS_SOURCE_LINK} && touch cache/.hasscore
+fi
+if [ ! -d hass-core ] || [ -z "$(ls -A hass-core 2>/dev/null)" ]; then
+    mkdir -p hass-core
+    tar -xzf ${HASS_CACHE} -C hass-core
+    mv hass-core/core-$HASS_VERSION/* ./hass-core
+    rm -rf ./hass-core/core-$HASS_VERSION
+fi
 rm -rf homeassistant.img
 
 touch  $IMG
@@ -52,7 +64,7 @@ mmdebstrap --arch=arm64 \
   --customize-hook='cp -rpf rootfs-overlay/* "$1"/'\
   --customize-hook='chroot "$1" chown -R 1000:1000 /homeassistant'\
   --customize-hook='chroot "$1" rm -rf /homeassistant/mmdeb-hass-img.sh'\
-  --customize-hook='mkfs.ext4 -b 4096 -L hass-core -d "$1"/homeassistant ./homeassistant.img 307200'\
+  --customize-hook='if [ ! -f homeassistant.img ]; then mkfs.ext4 -b 4096 -L hass-core -d "$1"/homeassistant ./homeassistant.img 307200; fi'\
   --customize-hook='chroot "$1" rm -rf /homeassistant/*'\
   --setup-hook='cp rootfs-overlay/etc/shadow "$1"/etc/'\
   --setup-hook='cp rootfs-overlay/etc/passwd "$1"/etc/'\
