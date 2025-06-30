@@ -59,6 +59,7 @@ rm -rf pip-build-env-* homeassistant.egg-info uv-cache build/ dist/
 rm -f CLA.md CODE_OF_CONDUCT.md CONTRIBUTING.md codecov.yml .coveragerc Dockerfile*
 find . -name "__pycache__" -exec rm -rf {} +
 rm -rf /home/haos/tmp ${UV_CACHE_DIR}
+exit
 
 
 

@@ -27,7 +27,7 @@ mmdebstrap --arch=arm64 \
   --customize-hook='chroot "$1" apt install -y systemd || true ;chroot "$1" mv -f /bin/systemd-sysusers /bin/systemd-sysusers.org&& chroot "$1" ln -s /bin/echo /bin/systemd-sysusers'\
   --customize-hook='chroot "$1" apt install -y network-manager systemd-timesyncd wpasupplicant  wireless-tools systemd-resolved u-boot-tools fdisk jq software-properties-common  openssh-server' \
   --components="main universe multiverse restricted"\
-  --include="vim,net-tools,iproute2,curl,wget,unzip,sudo,bash,iputils-ping,libusb-1.0-0,usbutils"\
+  --include="apt,vim,net-tools,iproute2,curl,wget,unzip,sudo,bash,iputils-ping,libusb-1.0-0,usbutils"\
   --setup-hook="mkdir -p \$1/etc" \
   --customize-hook='chroot "$1" add-apt-repository -y ppa:deadsnakes/ppa'\
   --customize-hook='chroot "$1" sed -i "/^deb .*Signed-By=/s/ Signed-By=[^ ]*//" /etc/apt/sources.list.d/deadsnakes-ubuntu-ppa-noble.sources || true' \
