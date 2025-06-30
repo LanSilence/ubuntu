@@ -54,9 +54,9 @@ mmdebstrap --arch=arm64 \
   --customize-hook='chroot "$1" rm -rf /homeassistant/mmdeb-hass-img.sh'\
   --customize-hook='mkfs.ext4 -b 4096 -L hass-core -d "$1"/homeassistant ./homeassistant.img 307200'\
   --customize-hook='chroot "$1" rm -rf /homeassistant/*'\
-  --setup-hook='cp /home/lan/homeassistant/haos-core/ubuntu/rootfs-overlay/etc/shadow "$1"/etc/'\
-  --setup-hook='cp /home/lan/homeassistant/haos-core/ubuntu/rootfs-overlay/etc/passwd "$1"/etc/'\
-  --setup-hook='cp /home/lan/homeassistant/haos-core/ubuntu/rootfs-overlay/etc/group "$1"/etc/'\
+  --setup-hook='cp rootfs-overlay/etc/shadow "$1"/etc/'\
+  --setup-hook='cp rootfs-overlay/etc/passwd "$1"/etc/'\
+  --setup-hook='cp rootfs-overlay/etc/group "$1"/etc/'\
   --variant=minbase \
   noble  rootfs.tar.gz http://ports.ubuntu.com/ubuntu-ports 
    # --include="sudo,bash,iproute2,iputils-ping,libusb-1.0-0,usbutils,network-manager,systemd-timesyncd,wpasupplicant,unzip,wireless-tools,systemd-resolved,u-boot-tools,fdisk,jq,software-properties-common,vim,net-tools,iproute2,curl,wget,openssh-server" 
