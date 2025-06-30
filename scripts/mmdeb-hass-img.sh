@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 # 1. 环境变量
 PYTHON_VERSION=3.13
@@ -12,10 +12,10 @@ AIODISCOVER_VERSION=2.7.0
 apt install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu python3-dev build-essential
 
 chown -R haos:haos /homeassistant
-su haos -c'
+
 mkdir -p /home/haos/uv-cache
 cd /homeassistant
-
+su haos -c'
 python${PYTHON_VERSION} -m venv venv
 source venv/bin/activate
 export UV_LINK_MODE=copy
