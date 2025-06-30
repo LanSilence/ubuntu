@@ -85,5 +85,10 @@ mkdir -p $TARGET_ROOTFS_DIR
 tar --exclude='dev/*' -xzf rootfs.tar.gz -C $TARGET_ROOTFS_DIR
 cp -rpf rootfs-overlay/* $TARGET_ROOTFS_DIR/
 rm rm -rf $TARGET_ROOTFS_DIR/lib/modules/6.12.0-haos+/build
+rm -rf $TARGET_ROOTFS_DIR/homeassistant/*
 rm -rf $TARGET_ROOTFS_DIR/sbin.usr-is-merged $TARGET_ROOTFS_DIR/bin.usr-is-merged $TARGET_ROOTFS_DIR/lib.usr-is-merged
-fakeroot mkfs.erofs -zlz4hc,12  -Efragments -Ededupe -Eztailpacking ubuntu-24.04-rootfs.img $TARGET_ROOTFS_DIR/
+fakeroot bash -c "
+chown -R 1000:1000 $TARGET_ROOTFS_DIR/homeassistant || true
+chown -R 1000:1000 $TARGET_ROOTFS_DIR/home/haos || true
+mkfs.erofs -zlz4hc,12  -Efragments -Ededupe -Eztailpacking ubuntu-24.04-rootfs.img $TARGET_ROOTFS_DIR/
+"
