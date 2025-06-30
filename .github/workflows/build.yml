@@ -17,7 +17,7 @@ jobs:
           submodules: true
 
     - name: build rootfs
-      run: scripts/mk-ubuntu-copy.sh
+      run: scripts/mk-ubuntu.sh
 
 
     - name: Upload build artifacts
