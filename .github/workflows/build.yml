@@ -17,7 +17,7 @@ jobs:
           submodules: true
 
     - name: build rootfs
-      run: make clean;make rk3399-custom
+      run: scripts/mk-ubuntu-copy.sh
 
 
     - name: Upload build artifacts
