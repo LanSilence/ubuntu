@@ -16,7 +16,7 @@ chown -R haos:haos /homeassistant
 mkdir -p /home/haos/uv-cache
 cd /homeassistant
 su haos -c'
-python${PYTHON_VERSION} -m venv venv
+python3.13 -m venv venv
 source venv/bin/activate
 export UV_LINK_MODE=copy
 export TMPDIR=/home/haos/tmp
