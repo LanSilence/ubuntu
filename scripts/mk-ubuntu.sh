@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-rm -rf binary
 
 # 1. 环境变量
 PYTHON_VERSION=3.13
@@ -15,19 +14,38 @@ SCRIPTS_DIR=$(dirname "$(readlink -f "$0")")
 HASS_SOURCE=${1:-../source/homeassistant-core/core-${HASS_VERSION}}
 IMG=homeassistant.img
 IMG_SIZE=1200M
-
+HASS_SOURCE_LINK=https://github.com/home-assistant/core/archive/refs/tags/${HASS_VERSION}.tar.gz
+HASS_CACHE=cache/homeassistant-core-v${HASS_VERSION}
 # wget http://ftp.ubuntu.com/ubuntu/pool/universe/o/opensysusers/opensysusers_0.7.3-5_all.deb -O opensysusers.deb
 
+
+if [ ! -f $HASS_SOURCE ]; then
+  if [ ! -f cache/.hasscore ]; then
+      mkdir -p cache/
+      wget -O ${HASS_CACHE} ${HASS_SOURCE_LINK} && touch cache/.hasscore
+  fi
+else
+  mkdir -p hass-core
+  cp -r $HASS_SOURCE/* hass-core/
+fi
+
+if [ ! -d hass-core ] || [ -z "$(ls -A hass-core 2>/dev/null)" ]; then
+    mkdir -p hass-core
+    tar -xzf ${HASS_CACHE} -C hass-core
+    mv hass-core/core-$HASS_VERSION/* ./hass-core
+    rm -rf ./hass-core/core-$HASS_VERSION
+fi
+
+if [ ! -f rootfs.tar.gz ];then
 rm -rf homeassistant.img
 
 touch  $IMG
 chmod 777 $IMG
-
 mmdebstrap --arch=arm64 \
   --customize-hook='chroot "$1" apt install -y systemd || true ;chroot "$1" mv -f /bin/systemd-sysusers /bin/systemd-sysusers.org&& chroot "$1" ln -s /bin/echo /bin/systemd-sysusers'\
   --customize-hook='chroot "$1" apt install -y network-manager systemd-timesyncd wpasupplicant  wireless-tools systemd-resolved u-boot-tools fdisk jq software-properties-common  openssh-server' \
   --components="main universe multiverse restricted"\
-  --include="vim,net-tools,iproute2,curl,wget,unzip,sudo,bash,iputils-ping,libusb-1.0-0,usbutils"\
+  --include="apt,vim,net-tools,iproute2,curl,wget,unzip,sudo,bash,iputils-ping,libusb-1.0-0,usbutils"\
   --setup-hook="mkdir -p \$1/etc" \
   --customize-hook='chroot "$1" add-apt-repository -y ppa:deadsnakes/ppa'\
   --customize-hook='chroot "$1" sed -i "/^deb .*Signed-By=/s/ Signed-By=[^ ]*//" /etc/apt/sources.list.d/deadsnakes-ubuntu-ppa-noble.sources || true' \
@@ -54,14 +72,23 @@ mmdebstrap --arch=arm64 \
   --customize-hook='chroot "$1" rm -rf /homeassistant/mmdeb-hass-img.sh'\
   --customize-hook='mkfs.ext4 -b 4096 -L hass-core -d "$1"/homeassistant ./homeassistant.img 307200'\
   --customize-hook='chroot "$1" rm -rf /homeassistant/*'\
-  --setup-hook='cp /home/lan/homeassistant/haos-core/ubuntu/rootfs-overlay/etc/shadow "$1"/etc/'\
-  --setup-hook='cp /home/lan/homeassistant/haos-core/ubuntu/rootfs-overlay/etc/passwd "$1"/etc/'\
-  --setup-hook='cp /home/lan/homeassistant/haos-core/ubuntu/rootfs-overlay/etc/group "$1"/etc/'\
+  --customize-hook='chroot "$1" apt remove -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu build-essential'\
+  --setup-hook='cp rootfs-overlay/etc/shadow "$1"/etc/'\
+  --setup-hook='cp rootfs-overlay/etc/passwd "$1"/etc/'\
+  --setup-hook='cp rootfs-overlay/etc/group "$1"/etc/'\
   --variant=minbase \
   noble  rootfs.tar.gz http://ports.ubuntu.com/ubuntu-ports 
    # --include="sudo,bash,iproute2,iputils-ping,libusb-1.0-0,usbutils,network-manager,systemd-timesyncd,wpasupplicant,unzip,wireless-tools,systemd-resolved,u-boot-tools,fdisk,jq,software-properties-common,vim,net-tools,iproute2,curl,wget,openssh-server" 
 
-mkdir binary
-tar --exclude='dev/*' -xzf rootfs.tar.gz -C binary
-
-fakeroot mkfs.erofs -zlz4hc,12  -Efragments -Ededupe -Eztailpacking ubuntu-24.04-rootfs.img binary/
+fi
+mkdir -p $TARGET_ROOTFS_DIR
+tar --exclude='dev/*' -xzf rootfs.tar.gz -C $TARGET_ROOTFS_DIR
+cp -rpf rootfs-overlay/* $TARGET_ROOTFS_DIR/
+rm rm -rf $TARGET_ROOTFS_DIR/lib/modules/6.12.0-haos+/build
+rm -rf $TARGET_ROOTFS_DIR/homeassistant/*
+rm -rf $TARGET_ROOTFS_DIR/sbin.usr-is-merged $TARGET_ROOTFS_DIR/bin.usr-is-merged $TARGET_ROOTFS_DIR/lib.usr-is-merged
+fakeroot bash -c "
+chown -R 1000:1000 $TARGET_ROOTFS_DIR/homeassistant || true
+chown -R 1000:1000 $TARGET_ROOTFS_DIR/home/haos || true
+mkfs.erofs -zlz4hc,12  -Efragments -Ededupe -Eztailpacking ubuntu-24.04-rootfs.img $TARGET_ROOTFS_DIR/
+"

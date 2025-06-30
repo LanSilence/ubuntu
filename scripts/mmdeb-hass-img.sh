@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 # 1. 环境变量
 PYTHON_VERSION=3.13
@@ -9,17 +9,14 @@ MATTER_SERVER_VERSION=7.0.0
 AIODISCOVER_VERSION=2.7.0
 
 
-
-apt update
-
 apt install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu python3-dev build-essential
 
 chown -R haos:haos /homeassistant
-su haos
+
 mkdir -p /home/haos/uv-cache
 cd /homeassistant
-
-python${PYTHON_VERSION} -m venv venv
+su haos -c'
+python3.13 -m venv venv
 source venv/bin/activate
 export UV_LINK_MODE=copy
 export TMPDIR=/home/haos/tmp
@@ -50,15 +47,15 @@ pip install -r requirements.txt -c homeassistant/package_constraints.txt
 # 可选：预编译前端资源
 if [ -f script/frontend.py ]; then
     python3 -m script.frontend
-fi
+fi'
 
 # 清理
-apt remove -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu build-essential
 rm -rf pip-cache tests/ requirements_test*.txt .pylintrc mypy.ini
 rm -rf pip-build-env-* homeassistant.egg-info uv-cache build/ dist/
 rm -f CLA.md CODE_OF_CONDUCT.md CONTRIBUTING.md codecov.yml .coveragerc Dockerfile*
 find . -name "__pycache__" -exec rm -rf {} +
 rm -rf /home/haos/tmp ${UV_CACHE_DIR}
+exit
 
 
 

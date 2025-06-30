@@ -15,9 +15,13 @@ jobs:
       with:
           fetch-depth: 0
           submodules: true
-
+    - name: Install  dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mmdebstrap libconfuse-dev qemu-user-static make gcc rauc u-boot-tools mtools erofs-utils
+        pip install pyelftools
     - name: build rootfs
-      run: make clean;make rk3399-custom
+      run: scripts/mk-ubuntu.sh
 
 
     - name: Upload build artifacts
