@@ -14,7 +14,7 @@ apt install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linu
 chown -R haos:haos /homeassistant
 
 mkdir -p /home/haos/uv-cache
-chown -R haos:haso /home/haos
+chown -R 1000:1000 /home/haos
 cd /homeassistant
 su haos -c'
 python3.13 -m venv venv
