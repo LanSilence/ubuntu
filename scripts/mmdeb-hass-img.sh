@@ -14,7 +14,7 @@ chown -R haos:haos /homeassistant
 mkdir -p /home/haos/uv-cache
 chown -R 1000:1000 /home/haos
 cd /homeassistant
-su haos -c'
+su haos <<'EOF'
 python3.13 -m venv venv
 source venv/bin/activate
 export UV_LINK_MODE=copy
@@ -30,25 +30,13 @@ pip install -r requirements.txt -c homeassistant/package_constraints.txt
 # 安装前端、matter-server、aiodiscover
 
 VENV_PATH="/homeassistant/venv"
-REQUIREMENTS_FILE="requirements_all.txt"
+REQUIREMENTS_FILE="/homeassistant/requirements_all.txt"
 CONSTRAINTS_FILE="/homeassistant/homeassistant/package_constraints.txt"
 UV_PIP="$VENV_PATH/bin/uv pip"
 
-dependencies=(
-    "python-matter-server"
-    "aiodiscover"
-    "aiodhcpwatcher"
-    "av"
-    "PyNaCl"
-    "pyotp"
-    "PyQRCode"
-    "home-assistant-frontend"
-    "aiousbwatcher"
-    "async-upnp-client"
-    "go2rtc-client"
-)
+dependencies="python-matter-server aiodiscover aiodhcpwatcher av PyNaCl pyotp PyQRCode home-assistant-frontend aiousbwatcher async-upnp-client go2rtc-client"
 
-for dep in "${dependencies[@]}"; do
+for dep in $dependencies; do
     version=$(grep -E "^${dep}==" "$REQUIREMENTS_FILE" | awk -F'==' '{print $2}')
     $UV_PIP install "${dep}==${version}" --index-strategy unsafe-first-match --upgrade --constraint "$CONSTRAINTS_FILE"
 done
@@ -56,7 +44,8 @@ done
 # 可选：预编译前端资源
 if [ -f script/frontend.py ]; then
     python3 -m script.frontend
-fi'
+fi
+EOF
 
 # 清理
 rm -rf pip-cache tests/ requirements_test*.txt .pylintrc mypy.ini
