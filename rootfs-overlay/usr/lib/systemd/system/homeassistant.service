@@ -1,11 +1,13 @@
 [Unit]
 Description=Home Assistant
-After=haos-image.mount
+After=hassos-image.mount home-haos.mount
 
 [Service]
+User=haos
 Type=simple
 WorkingDirectory=/homeassistant
 Environment="PATH=/homeassistant/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="TMPDIR=/mnt/data/tmp"
 ExecStart=python3.13 -m homeassistant --config /mnt/data/.homeassistant
 Restart=on-failure
 RestartSec=30s

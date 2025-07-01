@@ -4,7 +4,6 @@ mkdir -p /mnt/overlay/etc/
 
 # Network
 mkdir -p /mnt/overlay/etc/NetworkManager/system-connections
-mkdir -p /mnt/overlay/root/.cache/uv
 
 if [ ! -f /mnt/overlay/etc/hostname ]; then
     cp -fp /etc/hostname /mnt/overlay/etc/hostname

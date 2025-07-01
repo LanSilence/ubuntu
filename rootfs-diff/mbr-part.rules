@@ -4,5 +4,5 @@ ENV{ID_PART_ENTRY_UUID}=="48617373-06", SYMLINK+="disk/by-partlabel/hassos-syste
 ENV{ID_PART_ENTRY_UUID}=="48617373-07", SYMLINK+="disk/by-partlabel/hassos-core0"
 ENV{ID_PART_ENTRY_UUID}=="48617373-08", SYMLINK+="disk/by-partlabel/hassos-kernel1"
 ENV{ID_PART_ENTRY_UUID}=="48617373-09", SYMLINK+="disk/by-partlabel/hassos-system1"
-ENV{ID_PART_ENTRY_UUID}=="48617373-10", SYMLINK+="disk/by-partlabel/hassos-core1"
-ENV{ID_PART_ENTRY_UUID}=="48617373-11", SYMLINK+="disk/by-partlabel/hassos-bootstate"
+ENV{ID_PART_ENTRY_UUID}=="48617373-0a", SYMLINK+="disk/by-partlabel/hassos-core1"
+ENV{ID_PART_ENTRY_UUID}=="48617373-0b", SYMLINK+="disk/by-partlabel/hassos-bootstate"

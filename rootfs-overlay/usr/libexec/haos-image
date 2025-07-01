@@ -6,21 +6,26 @@ RAUC_SLOT=$(cat /proc/cmdline | grep -o 'rauc.slot=[AB]' | cut -d= -f2)
 # 根据参数选择分区
 case "$RAUC_SLOT" in
     A)
-        PARTITION="hass-img0"
+        PARTITION="hassos-core0"
         ;;
     B)
-        PARTITION="hass-img1"
+        PARTITION="hassos-core1"
         ;;
     *)
         echo "错误：未检测到有效的 rauc.slot 参数（应为 A 或 B）"
-        PARTITION="hass-img0"
+        PARTITION="hassos-core0"
         ;;
 esac
+
 
 # 挂载分区到 /homeassistant
 MOUNT_POINT="/homeassistant"
 mkdir -p /mnt/data/.homeassistant
-DEVICE="/dev/disk/by-label/${PARTITION}"
+chown -R haos:haos /mnt/data/.homeassistant
+DEVICE="/dev/disk/by-partlabel/${PARTITION}"
+
+mkdir -p /mnt/data/tmp
+chmod 777 /mnt/data/tmp
 
 if [ ! -e "$DEVICE" ]; then
     echo "错误：分区设备不存在: $DEVICE"
@@ -37,4 +42,10 @@ if [ $? -eq 0 ]; then
 else
     echo "mount fail!"
     exit 1
+fi
+
+if [ ! -d /mnt/data/home/haos ]; then
+    mkdir -p /mnt/data/home/haos
+    chown -R haos:haos /mnt/data/home/haos
+    sudo -u haos cp -r /home/haos/.* /mnt/data/home/haos/
 fi

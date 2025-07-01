@@ -1,0 +1,13 @@
+[Unit]
+Description=Dropbear persistent user
+After=hassos-image.service
+Before=homeassistant.service
+
+[Mount]
+What=/mnt/data/home/haos
+Where=/home/haos
+Type=None
+Options=bind
+
+[Install]
+WantedBy=multi-user.target
