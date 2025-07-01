@@ -51,7 +51,7 @@ mmdebstrap --arch=arm64 \
   --customize-hook='chroot "$1" apt install -y systemd || true ;chroot "$1" mv -f /bin/systemd-sysusers /bin/systemd-sysusers.org&& chroot "$1" ln -s /bin/echo /bin/systemd-sysusers'\
   --customize-hook='chroot "$1" apt install -y network-manager systemd-timesyncd wpasupplicant  wireless-tools systemd-resolved u-boot-tools fdisk jq software-properties-common  openssh-server' \
   --components="main universe multiverse restricted"\
-  --include="apt,vim,libubootenv-tool,net-tools,iproute2,curl,wget,unzip,sudo,bash,iputils-ping,libusb-1.0-0,usbutils"\
+  --include="apt,vim,libubootenv-tool,net-tools,iproute2,curl,wget,unzip,sudo,bash,iputils-ping,libusb-1.0-0,usbutils,mosquitto"\
   --setup-hook="mkdir -p \$1/etc" \
   --customize-hook='cp cache/assismgr.deb "$1"/var/'\
   --customize-hook='chroot "$1" dpkg -i /var/assismgr.deb'\
@@ -102,5 +102,7 @@ fakeroot bash -c "
 chmod u+s $TARGET_ROOTFS_DIR/usr/bin/sudo
 chown -R 1000:1000 $TARGET_ROOTFS_DIR/homeassistant || true
 chown -R 1000:1000 $TARGET_ROOTFS_DIR/home/haos || true
+chmod u+s $TARGET_ROOTFS_DIR/usr/bin/ping || true
+chown 102:104 $TARGET_ROOTFS_DIR/etc/mosquitto/pwfile | true
 mkfs.erofs -zlz4hc,12  -Efragments -Ededupe -Eztailpacking ubuntu-24.04-rootfs.img $TARGET_ROOTFS_DIR/
 "
