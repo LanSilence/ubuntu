@@ -103,6 +103,6 @@ chmod u+s $TARGET_ROOTFS_DIR/usr/bin/sudo
 chown -R 1000:1000 $TARGET_ROOTFS_DIR/homeassistant || true
 chown -R 1000:1000 $TARGET_ROOTFS_DIR/home/haos || true
 chmod u+s $TARGET_ROOTFS_DIR/usr/bin/ping || true
-chown mosquitto:mosquitto $TARGET_ROOTFS_DIR/etc/mosquitto/pwfile | true
+chown 102:104 $TARGET_ROOTFS_DIR/etc/mosquitto/pwfile | true
 mkfs.erofs -zlz4hc,12  -Efragments -Ededupe -Eztailpacking ubuntu-24.04-rootfs.img $TARGET_ROOTFS_DIR/
 "
