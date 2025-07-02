@@ -3,10 +3,7 @@ set -e
 
 # 1. 环境变量
 PYTHON_VERSION=3.13
-HASS_VERSION=2025.5.3
-FRONTEND_VERSION=20250516.0
-MATTER_SERVER_VERSION=7.0.0
-AIODISCOVER_VERSION=2.7.0
+HASS_VERSION=2025.6.3
 ROOTFSIMAGE=ubuntu-24.04-rootfs.img
 ROOT_DIR=$(pwd)
 TARGET_ROOTFS_DIR=${ROOT_DIR}/binary
@@ -51,7 +48,7 @@ mmdebstrap --arch=arm64 \
   --customize-hook='chroot "$1" apt install -y systemd || true ;chroot "$1" mv -f /bin/systemd-sysusers /bin/systemd-sysusers.org&& chroot "$1" ln -s /bin/echo /bin/systemd-sysusers'\
   --customize-hook='chroot "$1" apt install -y network-manager systemd-timesyncd wpasupplicant  wireless-tools systemd-resolved u-boot-tools fdisk jq software-properties-common  openssh-server' \
   --components="main universe multiverse restricted"\
-  --include="apt,vim,libubootenv-tool,net-tools,iproute2,curl,wget,unzip,sudo,bash,iputils-ping,libusb-1.0-0,usbutils,mosquitto"\
+  --include="apt,vim,libubootenv-tool,squashfs-tools,net-tools,iproute2,curl,wget,unzip,sudo,bash,iputils-ping,libusb-1.0-0,usbutils,mosquitto"\
   --setup-hook="mkdir -p \$1/etc" \
   --customize-hook='cp cache/assismgr.deb "$1"/var/'\
   --customize-hook='chroot "$1" dpkg -i /var/assismgr.deb'\

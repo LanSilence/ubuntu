@@ -3,10 +3,8 @@ set -ex
 
 # 1. 环境变量
 PYTHON_VERSION=3.13
-HASS_VERSION=2025.5.3
-FRONTEND_VERSION=20250516.0
-MATTER_SERVER_VERSION=7.0.0
-AIODISCOVER_VERSION=2.7.0
+HASS_VERSION=2025.6.3
+
 
 
 apt install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu binutils-aarch64-linux-gnu python3-dev build-essential
@@ -16,7 +14,7 @@ chown -R haos:haos /homeassistant
 mkdir -p /home/haos/uv-cache
 chown -R 1000:1000 /home/haos
 cd /homeassistant
-su haos -c'
+su haos <<'EOF'
 python3.13 -m venv venv
 source venv/bin/activate
 export UV_LINK_MODE=copy
@@ -31,24 +29,23 @@ pip install -r requirements.txt -c homeassistant/package_constraints.txt
 
 # 安装前端、matter-server、aiodiscover
 
-/homeassistant/venv/bin/uv pip install python-matter-server==7.0.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/uv pip install aiodiscover==2.7.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/uv pip install --quiet aiodhcpwatcher==1.1.1 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/uv pip install --quiet av==13.1.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/uv pip install --quiet PyNaCl==1.5.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/uv pip install --quiet pyotp==2.8.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/uv pip install --quiet PyQRCode==1.2.1 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/uv pip install --quiet home-assistant-frontend==20250516.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/uv pip install --quiet aiousbwatcher==1.1.1 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/uv pip install --quiet async-upnp-client==0.44.0 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/python3.13 -m uv pip install --quiet go2rtc-client==0.1.2 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
-/homeassistant/venv/bin/uv pip install --quiet go2rtc-client==0.1.2 --index-strategy unsafe-first-match --upgrade --constraint /homeassistant/homeassistant/package_constraints.txt
+VENV_PATH="/homeassistant/venv"
+REQUIREMENTS_FILE="/homeassistant/requirements_all.txt"
+CONSTRAINTS_FILE="/homeassistant/homeassistant/package_constraints.txt"
+UV_PIP="$VENV_PATH/bin/uv pip"
 
+dependencies="python-matter-server aiodiscover aiodhcpwatcher av PyNaCl pyotp PyQRCode home-assistant-frontend aiousbwatcher async-upnp-client go2rtc-client radios"
+
+for dep in $dependencies; do
+    version=$(grep -E "^${dep}==" "$REQUIREMENTS_FILE" | awk -F'==' '{print $2}')
+    $UV_PIP install "${dep}==${version}" --index-strategy unsafe-first-match --upgrade --constraint "$CONSTRAINTS_FILE"
+done
 
 # 可选：预编译前端资源
 if [ -f script/frontend.py ]; then
     python3 -m script.frontend
-fi'
+fi
+EOF
 
 # 清理
 rm -rf pip-cache tests/ requirements_test*.txt .pylintrc mypy.ini

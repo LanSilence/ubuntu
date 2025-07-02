@@ -1,0 +1,35 @@
+name: Build and Release Firmware
+
+on:
+  push:
+    branches: ["ubuntu24-hass6.3"]  # 仅当推送v开头的标签时触发（如v1.0.0）
+  workflow_dispatch:  # 支持手动触发
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+          fetch-depth: 0
+          submodules: true
+    - name: Install  dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mmdebstrap libconfuse-dev qemu-user-static make gcc rauc u-boot-tools mtools erofs-utils
+        pip install pyelftools
+    - name: build rootfs
+      run: scripts/mk-ubuntu.sh
+
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-outputs
+        path: |
+          *.img
+          rootfs.tar.gz
+
+        retention-days: 7          # 自定义保留天数[7](@ref)
