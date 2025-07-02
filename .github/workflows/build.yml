@@ -24,11 +24,18 @@ jobs:
       run: scripts/mk-ubuntu.sh
 
 
-    - name: Upload build artifacts
+    - name: Upload homeassistant.img
       uses: actions/upload-artifact@v4
       with:
-        name: build-outputs
+        name: homeassistant.img.zip
         path: |
-          *.img
+          homeassistant.img
+  
+    - name: Upload rootfs
+      uses: actions/upload-artifact@v4
+      with:
+        name: rootfs.zip
+        path: |
+          rootfs.tar.gz
 
         retention-days: 7          # 自定义保留天数[7](@ref)
