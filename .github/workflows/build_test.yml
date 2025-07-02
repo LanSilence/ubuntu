@@ -30,5 +30,6 @@ jobs:
         name: build-outputs
         path: |
           *.img
+          rootfs.tar.gz
 
         retention-days: 7          # 自定义保留天数[7](@ref)

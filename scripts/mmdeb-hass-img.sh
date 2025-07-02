@@ -34,7 +34,7 @@ REQUIREMENTS_FILE="/homeassistant/requirements_all.txt"
 CONSTRAINTS_FILE="/homeassistant/homeassistant/package_constraints.txt"
 UV_PIP="$VENV_PATH/bin/uv pip"
 
-dependencies="python-matter-server aiodiscover aiodhcpwatcher av PyNaCl pyotp PyQRCode home-assistant-frontend aiousbwatcher async-upnp-client go2rtc-client"
+dependencies="python-matter-server aiodiscover aiodhcpwatcher av PyNaCl pyotp PyQRCode home-assistant-frontend aiousbwatcher async-upnp-client go2rtc-client radios"
 
 for dep in $dependencies; do
     version=$(grep -E "^${dep}==" "$REQUIREMENTS_FILE" | awk -F'==' '{print $2}')
