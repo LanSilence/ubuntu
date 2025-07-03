@@ -89,10 +89,10 @@ fi
 mkdir -p $TARGET_ROOTFS_DIR
 tar --exclude='dev/*' -xzf rootfs.tar.gz -C $TARGET_ROOTFS_DIR
 cp -rpf rootfs-overlay/* $TARGET_ROOTFS_DIR/
-mkdir -p $TARGET_ROOTFS_DIR/lib/firmware/{brcm,aic8800_sdio}
-cp -r $ROOT_DIR/linux-firmware/brcm/* $TARGET_ROOTFS_DIR/lib/firmware/brcm/
-cp -r $ROOT_DIR/linux-firmware/aic8800_sdio/* $TARGET_ROOTFS_DIR/lib/firmware/aic8800_sdio/
-rm rm -rf $TARGET_ROOTFS_DIR/lib/modules/6.12.0-haos+/build
+mkdir -p $TARGET_ROOTFS_DIR/usr/lib/firmware/{brcm,aic8800_sdio}
+cp -r $ROOT_DIR/linux-firmware/brcm/* $TARGET_ROOTFS_DIR/usr/lib/firmware/brcm/
+cp -r $ROOT_DIR/linux-firmware/aic8800_sdio/* $TARGET_ROOTFS_DIR/usr/lib/firmware/aic8800_sdio/
+rm rm -rf $TARGET_ROOTFS_DIR/usr/lib/modules/6.12.0-haos+/build
 rm -rf $TARGET_ROOTFS_DIR/homeassistant/*
 rm -rf $TARGET_ROOTFS_DIR/sbin.usr-is-merged $TARGET_ROOTFS_DIR/bin.usr-is-merged $TARGET_ROOTFS_DIR/lib.usr-is-merged
 fakeroot bash -c "
