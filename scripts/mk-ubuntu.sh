@@ -39,6 +39,20 @@ ASSISMGER_LATEST_VERSION=$(curl -s https://api.github.com/repos/LanSilence/assis
 wget -O cache/assismgr.deb https://github.com/LanSilence/assismgr/releases/download/${ASSISMGER_LATEST_VERSION}/assismgr_${ASSISMGER_LATEST_VERSION}_arm64.deb
 fi
 
+if [ ! -f cache/frp.tar.gz ];then
+  FRP_LATEST_VERSION=$(curl -s https://api.github.com/repos/fatedier/frp/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")' | sed 's/^v//')
+  wget -O cache/frp.tar.gz https://github.com/fatedier/frp/releases/download/v${FRP_LATEST_VERSION}/frp_${FRP_LATEST_VERSION}_linux_arm64.tar.gz
+  tar -xzf cache/frp.tar.gz -C cache/
+  mv cache/frp_${FRP_LATEST_VERSION}_linux_arm64 cache/frp
+fi
+
+if [ ! -f $TARGET_ROOTFS_DIR/usr/sbin/frpc ]; then
+  mkdir -p $TARGET_ROOTFS_DIR/usr/sbin/
+  mkdir -p $TARGET_ROOTFS_DIR/opt/config/frp
+  cp cache/frp/frpc $TARGET_ROOTFS_DIR/usr/
+  cp cache/frp/frpc.toml $TARGET_ROOTFS_DIR/opt/config/frp/
+fi
+
 if [ ! -f rootfs.tar.gz ];then
 rm -rf homeassistant.img
 

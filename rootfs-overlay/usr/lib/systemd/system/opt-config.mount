@@ -1,0 +1,14 @@
+[Unit]
+Description=Hosts persistent configuration
+Requires=mnt-overlay.mount
+After=mnt-overlay.mount hassos-overlay.service
+Before=network.target
+
+[Mount]
+What=/mnt/overlay/config
+Where=/opt/config
+Type=none
+Options=bind
+
+[Install]
+WantedBy=multi-user.target

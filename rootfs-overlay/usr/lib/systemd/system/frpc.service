@@ -1,0 +1,17 @@
+[Unit]
+Description=FRP Client Service
+After=network.target opt-config.mount
+ConditionPathExists=/opt/config/frp/frpc.toml
+
+[Service]
+Type=simple
+User=root
+Restart=on-failure
+RestartSec=5s
+ExecStart=/usr/sbin/frpc -c /opt/config/frp/frpc.toml
+ExecReload=/usr/sbin/frpc reload -c /opt/config/frp/frpc.toml
+LimitNOFILE=1048576
+
+
+[Install]
+WantedBy=multi-user.target

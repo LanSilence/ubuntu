@@ -18,3 +18,8 @@ if [ ! -f /mnt/overlay/etc/systemd/timesyncd.conf ]; then
     mkdir -p /mnt/overlay/etc/systemd
     cp -fp /etc/systemd/timesyncd.conf /mnt/overlay/etc/systemd/timesyncd.conf
 fi
+
+if [ ! -d /mnt/overlay/config ]; then
+    mkdir -p /mnt/overlay/config
+    cp -r /opt/config/* /mnt/overlay/config/
+fi

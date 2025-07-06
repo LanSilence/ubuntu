@@ -10,7 +10,7 @@ Environment="PATH=/homeassistant/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sb
 Environment="TMPDIR=/mnt/data/tmp"
 ExecStart=python3.13 -m homeassistant --config /mnt/data/.homeassistant
 Restart=on-failure
-RestartSec=30s
+RestartSec=5s
 
 [Install]
 WantedBy=multi-user.target
