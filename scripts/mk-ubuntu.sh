@@ -46,12 +46,6 @@ if [ ! -f cache/frp.tar.gz ];then
   mv cache/frp_${FRP_LATEST_VERSION}_linux_arm64 cache/frp
 fi
 
-if [ ! -f $TARGET_ROOTFS_DIR/usr/sbin/frpc ]; then
-  mkdir -p $TARGET_ROOTFS_DIR/usr/sbin/
-  mkdir -p $TARGET_ROOTFS_DIR/opt/config/frp
-  cp cache/frp/frpc $TARGET_ROOTFS_DIR/usr/
-  cp cache/frp/frpc.toml $TARGET_ROOTFS_DIR/opt/config/frp/
-fi
 
 if [ ! -f rootfs.tar.gz ];then
 rm -rf homeassistant.img
@@ -100,6 +94,14 @@ mmdebstrap --arch=arm64 \
    # --include="sudo,bash,iproute2,iputils-ping,libusb-1.0-0,usbutils,network-manager,systemd-timesyncd,wpasupplicant,unzip,wireless-tools,systemd-resolved,u-boot-tools,fdisk,jq,software-properties-common,vim,net-tools,iproute2,curl,wget,openssh-server" 
 
 fi
+
+if [ ! -f $TARGET_ROOTFS_DIR/usr/sbin/frpc ]; then
+  mkdir -p $TARGET_ROOTFS_DIR/usr/sbin/
+  mkdir -p $TARGET_ROOTFS_DIR/opt/config/frp
+  cp cache/frp/frpc $TARGET_ROOTFS_DIR/usr/sbin/
+  cp cache/frp/frpc.toml $TARGET_ROOTFS_DIR/opt/config/frp/
+fi
+
 mkdir -p $TARGET_ROOTFS_DIR
 tar --exclude='dev/*' -xzf rootfs.tar.gz -C $TARGET_ROOTFS_DIR
 cp -rpf rootfs-overlay/* $TARGET_ROOTFS_DIR/
