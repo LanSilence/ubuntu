@@ -2,7 +2,7 @@ name: Build and Release Firmware
 
 on:
   push:
-    branches: ["push"]
+    branches: ["master"]
   workflow_dispatch:  # 支持手动触发
 
 jobs:
@@ -21,7 +21,9 @@ jobs:
         sudo apt-get install -y mmdebstrap libconfuse-dev qemu-user-static make gcc rauc u-boot-tools mtools erofs-utils
         pip install pyelftools
     - name: build rootfs
-      run: scripts/mk-ubuntu.sh
+      run: |
+        scripts/mk-ubuntu.sh
+        tar -czf hassimg.tar.gz homeassistant.img
 
 
     - name: Upload homeassistant.img
@@ -30,12 +32,29 @@ jobs:
         name: homeassistant.img.zip
         path: |
           homeassistant.img
+          
   
     - name: Upload rootfs
       uses: actions/upload-artifact@v4
       with:
-        name: rootfs.zip
+        name: rootfs
         path: |
           rootfs.tar.gz
-
         retention-days: 30          # 自定义保留天数[7](@ref)
+
+    - name: Publish to GitHub Releases
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        files: |
+          hassimg.tar.gz
+          rootfs.tar.gz
+        tag_name: ${{ github.ref_name }}  # 使用触发工作流的标签（如v1.0.0）
+        name: " AssisMgr Release ${{ github.ref_name }}"
+        body: |
+          * 版本: ${{ github.ref_name }}
+          * Commit: ${{ github.sha }}
+          * 提交信息: ${{ github.event.head_commit.message }}
+          * 提交者: ${{ github.event.head_commit.author.name }}
+        draft: false
