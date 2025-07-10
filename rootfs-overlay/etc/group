@@ -47,3 +47,4 @@ mosquitto:x:104:
 haos:x:1000:
 rdma:x:105:
 netdev:x:106:
+avahi:x:995:
